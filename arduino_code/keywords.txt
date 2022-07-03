@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+Command KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+getCommand	KEYWORD2
+makeCommand	KEYWORD2
+getCommandId	KEYWORD2
+getCommand	KEYWORD2
+getData	KEYWORD2
+toString	KEYWORD2
+isRight	KEYWORD2
+
+######################################
+# Constants (LITERAL1)
+#######################################
+PLAY	LITERAL1
+PLAY_INDEX	LITERAL1
+PAUSE	LITERAL1
+VOLUME_UP	LITERAL1
+VOLUME_DOWN	LITERAL1
+UN_MUTE	LITERAL1
+SET_VOLUME	LITERAL1
+REQUEST_SONGS	LITERAL1
+SONGS	LITERAL1
+MOVE	LITERAL1
+REQUEST_STATUS_ROCKETS	LITERAL1
+STATUS_ROCKETS	LITERAL1
+FIRE	LITERAL1
+CONNECTING	LITERAL1
+CONNECTED	LITERAL1
+REQUEST_ADDRESS	LITERAL1
+YOUR_ADDRESS	LITERAL1
+ESP_READY	LITERAL1
+NOT_FOUND	LITERAL1

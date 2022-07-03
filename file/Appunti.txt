@@ -1,0 +1,148 @@
+CH_EN = Chip Enable
+	Da tenere sempre alto (3,3V)
+UTXD = Da collegare al TX di Arduino
+	Da non collegare a massa durante lo startup
+URXD = Da collegare al RX di Arduino
+GPIO0 e GPIO2 usati per entrare in boot mode
+se GPIO0 è basso durante il RST o l'alimentazione l'ESP entra in serial programming mode
+Arduino riconosce HIGH quando > 2,5
+
+Differenze tra ESP-01 e -01s:
+	ESP-01 (blue PCB) vs ESP-01S (black PCB)
+	- 512kB flash vs 1MB flash
+	- Red power LED vs -No- power LED
+	- Blue LED on TX vs Blue LED on GPIO2 (low = on)
+
+BAUD_RATE di default = 74880
+
+Istruzioni:
+- Rimuovere l'ATMEGA
+- RST di Arduino a GND
+- TXd a TX
+- RXd a RX
+- RST ESP floattante
+- GPIO0 a GND
+- Resetta l'ESP portando RST a GND
+- Impostazione scheda: > Generic 8266 Module
+	> Flash mode:DIO
+	> Flash size:1M(SPIFFS)
+	> Uploadspeed:115200
+	> Programmer:Arduino ISP
+
+Video https://www.youtube.com/watch?v=N5MoXarCF_4
+- TXd a TX
+- RXd a RX
+- EN a VCC
+- GPIO0 a GND
+- GPIO2 floattante
+- RST ad un pulsante NO verso GND
+- RST di Arduino a GND
+- Scheda:
+	> Generic 8266 Module
+	> Non cambiare nient'altro
+- Non serve nessuna libreria particolare
+- Resetta l'ESP portando brevemente RST a GND
+- Carica
+- Durante il caricamento il led BLU lampeggia
+- Dopo il caricamento scollega GPIO0 da GND e resetta
+
+PROBLEMA:
+Non funziona LLC su RX -> da togliere per il caricamento. NON SO IL PERCHE'
+
+Errore ESP:
+11:53:29.201 ->  ets Jan  8 2013,rst cause:2, boot mode:(3,6)
+11:53:29.201 -> 
+11:53:29.201 -> load 0x4010f000, len 3584, room 16 
+tail 0
+11:53:29.235 -> chksum 0xef
+11:53:29.235 -> csum 0xef
+11:53:29.235 -> csum err
+11:53:29.235 -> ets_main.c
+
+Spiegazione errori:
+reset causes:
+        0:
+        1: normal boot
+        2: reset pin
+        3: software reset
+        4: watchdog reset
+
+    boot device:
+        0:
+        1: ram
+        3: flash
+
+In the bootup message 'boot mode:(x,y)' three low bits of x are {MTDO (RST), GPIO0, GPIO2}.
+Converti x in binario
+	RST	GPIO0	GPIO2
+0:	0 	0	0
+1: 	0	0	1
+3:	0	1	1
+
+Al primo avvio esce questo:
+13:42:22.547 ->  ets Jan  8 2013,rst cause:1, boot mode:(3,6)
+13:42:22.547 -> 
+13:42:22.547 -> load 0x40100000, len 2408, room 16 
+13:42:22.547 -> tail 8
+13:42:22.547 -> chksum 0xe5
+13:42:22.547 -> load 0x3ffe8000, len 776, room 0 
+tail 8
+13:42:22.581 -> chksum 0x84
+13:42:22.581 -> load 0x3ffe8310, len 632, room 0 
+13:42:22.581 -> tail 8
+13:42:22.581 -> chksum 0xd8
+13:42:22.581 -> csum 0xd8
+13:42:22.581 -> 
+13:42:22.581 -> 2nd boot version : 1.6
+13:42:22.581 ->   SPI Speed      : 40MHz
+13:42:22.581 ->   SPI Mode       : QIO
+13:42:22.581 ->   SPI Flash Size & Map: 8Mbit(512KB+512KB)
+jump to run user1 @ 1000
+13:42:22.751 -> 
+rf cal sector: 249
+13:42:23.128 -> rf[112] : 00
+13:42:23.128 -> rf[113] : 00
+13:42:23.128 -> rf[114] : 01
+13:42:23.128 -> w_flash
+
+13:42:23.196 -> SDK ver: 2.0.0(5a875ba) compiled @ Aug  9 2016 15:12:27
+13:42:23.229 -> phy ver: 1055, pp ver: 10.2
+13:42:23.229 -> 
+mode : softAP(ea:db:84:dc:52:ba)
+13:42:23.364 -> add if1
+13:42:23.364 -> dhcp server start:(ip:192.168.4.1,mask:255.255.255.0,gw:192.168.4.1)
+13:42:23.364 -> bcn 100
+⸮⸮PCA
+
+Al secondo questo:
+
+13:44:36.970 ->  ets Jan  8 2013,rst cause:2, boot mode:(3,7)
+13:44:36.970 -> 
+13:44:36.970 -> load 0x40100000, len 2408, room 16 
+13:44:36.970 -> tail 8
+13:44:36.970 -> chksum 0xe5
+13:44:36.970 -> load 0x3ffe8000, len 776, room 0 
+13:44:36.970 -> tail 8
+13:44:36.970 -> chksum 0x84
+13:44:37.005 -> load 0x3ffe8310, len 632, room 0 
+13:44:37.005 -> tail 8
+13:44:37.005 -> chksum 0xd8
+13:44:37.005 -> csum 0xd8
+13:44:37.005 -> 
+13:44:37.005 -> 2nd boot version : 1.6
+13:44:37.005 ->   SPI Speed      : 40MHz
+13:44:37.005 ->   SPI Mode       : QIO
+13:44:37.005 ->   SPI Flash Size & Map: 8Mbit(512KB+512KB)
+13:44:37.005 -> jump to run user1 @ 1000
+13:44:37.005 -> 
+rf cal sector: 249
+13:44:37.107 -> rf[112] : 00
+13:44:37.107 -> rf[113] : 00
+13:44:37.107 -> rf[114] : 01
+13:44:37.107 -> 
+13:44:37.107 -> SDK ver: 2.0.0(5a875ba) compiled @ Aug  9 2016 15:12:27
+13:44:37.107 -> phy ver: 1055, pp ver: 10.2
+13:44:37.107 -> 
+13:44:37.107 -> ⸮P⸮
+
+L'ultimo messaggio, se letto in 115200 dice "13:45:52.506 -> ready"

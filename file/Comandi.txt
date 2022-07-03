@@ -1,0 +1,138 @@
+Comandi:
+
+Struttura:
+Buffer da 6 byte
+Start byte + comando + quanti dati + dato0 + dato1 + end byte
+START_BYTE = 0x69
+END_BYTE = 0xFA 
+
+Esempio: imposta il volume al 70%
+	>setVolume/70<
+
+Lista comandi:
+MP3:
+- play: riproduce la canzone
+	no data
+- playIndex: riproduce la canzone selezionata
+	1°: (int) indice della canzone
+- pause: ferma la riproduzione
+	no data
+- volumeUp: alza il volume
+	no data
+- volumeDown: abbassa il volume
+	no data
+- unMute: riporta il volume a quant'era in precedenza
+	no data
+- setVolume: imposta il volume
+	1°: (int) livello volume (in percentuale: 50% - 30%)
+- requestSongs: richiede le canzoni, in ordine e con i titoli
+	no data
+- songs: risposta a "requestSongs", contiene la lista di tutte le canzoni
+	1°: (String) titolo della canzone con index 0
+	2°: (String) titolo della canzone con index 1
+	.
+	.
+	.
+	n°: (String) titolo della canzone con index (n - 1) (ultima)
+
+Movimento:
+- move: indica la posizione del joystick
+	1°: (int) posizione sulla y (da -100%giu a 100%su, 0 è al centro)
+	2°: (int) posizione sulla x (da -100%sx a 100%dx, 0 è al centro) 
+
+Combattimento
+- requestStatusRockets: richiesta dello stato dei cannoni per aggiornare il display
+	no data
+- statusRockets: risposta a "requestStatusRockets"
+	1°: (boolean) pieno/vuoto cannone index 0
+	2°: (boolean) pieno/vuoto cannone index 1
+	3°: (boolean) pieno/vuoto cannone index 2
+	4°: (boolean) pieno/vuoto cannone index 3
+	5°: (boolean) pieno/vuoto cannone index 4
+	6°: (boolean) pieno/vuoto cannone index 5
+- fire: spara col primo cannone libero
+	no data
+
+Connessione:
+- connecting: avvisa che si sta tentando di connettersi
+	no data
+- connected: risposta al comando "connecting"
+	no data
+- requestAddress: richiesta per il proprio address
+	no data
+- yourAddress: risposta a "requestAddress"
+	1°: (String) address del richiedente ("192.168.1.2:80")
+
+ESP:
+- espReady: l'esp avvisa che il booting è completato, il WiFi è stato creato e la socket aperta
+	1°: (String) SSID del WiFi
+	2°: (String) password del WiFi
+	3°: (String) address della socket
+
+Utilità
+- notFound: comando non trovato
+	no data
+
+------------------------------------------------------------------------------------------------------
+
+Per prendere i dati del comando
+
+Java:
+    // Controlla che sia un comando
+    if(command.startsWith(">") && command.endsWith("<")) {
+            // Trova l'index del carattere finale
+            int endCommand = command.indexOf("<");
+            // Trova l'index della prima slash
+            int slash = command.indexOf("/");
+            // Se ce n'è almeno una vuol dire che c'è un dato
+            if(slash > -1) {
+                String commandString = command.substring(1, slash);	// Il comando effettivo
+                String dataString = command.substring(slash + 1, endCommand);	// La stringa contenente tutti i dati separati dalla slash
+                ArrayList<String> data = new ArrayList<>();
+                while (slash > -1) {
+                    slash = dataString.indexOf("/");
+		    // Controllare se ci sono altri dati o no
+                    if(slash > -1) {
+                        data.add(dataString.substring(0, slash));
+                        dataString = dataString.substring(slash + 1);
+                    }
+                    else data.add(dataString);
+                }
+                String[] dataArray = new String[data.size()];
+                data.toArray(dataArray);
+            } else {
+                // Se non c'è vuol dire che non ci sono dati da leggere
+                String commandString = command.substring(1, endCommand);
+            }
+        }
+
+---------------------------------------------------------------------------------------------------------------
+    static const byte START_BYTE = 0x69;
+    static const byte END_BYTE = 0xFA;
+    // MP3
+    static const byte PLAY = 0x00;
+    static const byte PLAY_INDEX = 0x01;
+    static const byte PAUSE = 0x02;
+    static const byte VOLUME_UP = 0x03;
+    static const byte VOLUME_DOWN = 0x04;
+    static const byte UN_MUTE = 0x05;
+    static const byte SET_VOLUME = 0x06;
+    static const byte REQUEST_SONGS = 0x07;
+    static const byte SONGS = 0x08;
+    static const byte NEXT_SONG = 0x12;
+    static const byte PREVIOUS_SONG = 0x13;
+    // Movement
+    static const byte MOVE = 0x09;
+    // Combact
+    static const byte REQUEST_STATUS_ROCKETS = 0x0A;
+    static const byte STATUS_ROCKETS = 0x0B;
+    static const byte FIRE = 0x0C;
+    // Connection
+    static const byte CONNECTING = 0x0D;
+    static const byte CONNECTED = 0x0E;
+    static const byte REQUEST_ADDRESS = 0x0F;
+    static const byte YOUR_ADDRESS = 0x10;
+    // ESP
+    static const byte ESP_READY = 0x11;
+    // Utility
+    static const byte NOT_FOUND = 0xFF;

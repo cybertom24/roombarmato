@@ -1,0 +1,8 @@
+Istruzioni: https://create.arduino.cc/projecthub/pratikdesai/how-to-program-esp8266-esp-01-module-with-arduino-uno-598166
+	https://create.arduino.cc/projecthub/ROBINTHOMAS/programming-esp8266-esp-01-with-arduino-011389
+	https://www.instructables.com/Programming-ESP-01-With-Arduino/
+
+Datasheet: https://nurdspace.nl/ESP8266
+	https://github.com/esp8266/esp8266-wiki/wiki/Boot-Process#esp-boot-modes
+
+Schede: http://arduino.esp8266.com/stable/package_esp8266com_index.json

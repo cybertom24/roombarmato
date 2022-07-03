@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="lever_float">1</integer>
+    <integer name="lever_angle">2</integer>
+    <integer name="lever_percentage">3</integer>
+    <integer name="vertical">4</integer>
+    <integer name="horizontal">5</integer>
+    <integer name="left">6</integer>
+    <integer name="right">7</integer>
+
+    <declare-styleable name="Joystick">
+        <attr name="joystick_knobColor" format="color" />
+        <attr name="joystick_externalColor" format="color" />
+        <attr name="joystick_knobSize" format="float" />
+        <attr name="joystick_myPadding" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="Lever">
+        <attr name="lever_knobColor" format="color" />
+        <attr name="lever_sliderColor" format="color" />
+        <attr name="lever_knobSize" format="float" />
+        <attr name="lever_sliderWidth" format="float" />
+        <attr name="lever_sliderHeight" format="float" />
+        <attr name="lever_orientation" format="integer" />
+        <attr name="lever_myPadding" format="integer" />
+        <attr name="lever_minValue" format="float" />
+        <attr name="lever_maxValue" format="float" />
+        <attr name="lever_type" format="integer" />
+        <attr name="lever_defaultValue" format="float" />
+        <attr name="lever_resolution" format="float" />
+        <attr name="lever_textSide" format="integer" />
+        <attr name="lever_textVisible" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="Indicator">
+        <attr name="indicator_onColor" format="color" />
+        <attr name="indicator_offColor" format="color" />
+        <attr name="indicator_quantity" format="integer" />
+        <attr name="indicator_backgroundColor" format="color" />
+        <attr name="indicator_orientation" format="integer" />
+        <attr name="indicator_strokeColor" format="color" />
+        <attr name="indicator_ledSize" format="float" />
+        <attr name="indicator_strokeSize" format="float" />
+    </declare-styleable>
+</resources>
