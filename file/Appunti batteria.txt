@@ -1,0 +1,12 @@
+Batteria scelta per il lancio dei missili: 18650 Sony vtc6
+Corrente di scarica: 10A
+-> Resistenza: 0,4 Ohm (comprendendo i contatti e la resistenza interna)
+-> A 10A e 3000mAh si hanno a disposizione ~270 scariche da 4s
+
+Controllo:
+MOSFET di potenza: MCU80N03A
+	-> Corrente continua D-S = 80A
+	-> Potenza dissipata (80A) = 45W
+	-> Rds = 6mOhm
+
+	-> a 10A di Ids e una Rds di 6mOhm si ha una potenza di 0.06W

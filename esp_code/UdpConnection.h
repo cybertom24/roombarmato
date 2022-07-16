@@ -14,7 +14,7 @@
       void checkPackets();
       void refresh();
       CustomBuffer getMessage();
-      void send(byte message[Command::SIZE]);
+      void send(byte message[COMMAND_SIZE]);
       bool debug = false, newMessage = false;
     private:
       String MYSSID, MYPASSWORD;
@@ -22,6 +22,6 @@
       String senderIP;
       int senderPort;
       WiFiUDP _udp;
-      byte receivedBuffer[Command::SIZE]; // Buffer per tenere i pacchetti ricevuti
+      byte receivedBuffer[COMMAND_SIZE]; // Buffer per tenere i pacchetti ricevuti
   };
 #endif

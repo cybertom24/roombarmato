@@ -57,9 +57,9 @@ CustomBuffer UdpConnection::getMessage() {
   return CustomBuffer(receivedBuffer);
 }
 
-void UdpConnection::send(byte message[Command::SIZE]) {
-  char _buffer[Command::SIZE];
-  for(int i = 0; i < Command::SIZE; i++) {
+void UdpConnection::send(byte message[COMMAND_SIZE]) {
+  char _buffer[COMMAND_SIZE];
+  for(int i = 0; i < COMMAND_SIZE; i++) {
     _buffer[i] = message[i];
   }
   _udp.beginPacket(senderIP.c_str(), senderPort);

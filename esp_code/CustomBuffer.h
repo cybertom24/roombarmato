@@ -2,7 +2,7 @@
   #define CustomBuffer_H
   #include "arduino.h"
   #include "Command.h"
-  #define BUFFER_SIZE Command::SIZE
+  #define BUFFER_SIZE COMMAND_SIZE
   
 class CustomBuffer {
   public:

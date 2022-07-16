@@ -72,40 +72,6 @@ ESP:
 Utilità
 - notFound: comando non trovato
 	no data
-
-------------------------------------------------------------------------------------------------------
-
-Per prendere i dati del comando
-
-Java:
-    // Controlla che sia un comando
-    if(command.startsWith(">") && command.endsWith("<")) {
-            // Trova l'index del carattere finale
-            int endCommand = command.indexOf("<");
-            // Trova l'index della prima slash
-            int slash = command.indexOf("/");
-            // Se ce n'è almeno una vuol dire che c'è un dato
-            if(slash > -1) {
-                String commandString = command.substring(1, slash);	// Il comando effettivo
-                String dataString = command.substring(slash + 1, endCommand);	// La stringa contenente tutti i dati separati dalla slash
-                ArrayList<String> data = new ArrayList<>();
-                while (slash > -1) {
-                    slash = dataString.indexOf("/");
-		    // Controllare se ci sono altri dati o no
-                    if(slash > -1) {
-                        data.add(dataString.substring(0, slash));
-                        dataString = dataString.substring(slash + 1);
-                    }
-                    else data.add(dataString);
-                }
-                String[] dataArray = new String[data.size()];
-                data.toArray(dataArray);
-            } else {
-                // Se non c'è vuol dire che non ci sono dati da leggere
-                String commandString = command.substring(1, endCommand);
-            }
-        }
-
 ---------------------------------------------------------------------------------------------------------------
     static const byte START_BYTE = 0x69;
     static const byte END_BYTE = 0xFA;
