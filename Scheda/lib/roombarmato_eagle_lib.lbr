@@ -6142,6 +6142,28 @@ grid 2.54 mm, diameter 6 mm</description>
 <text x="2.667" y="-2.54" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 <rectangle x1="0.254" y1="-1.27" x2="0.762" y2="1.27" layer="51"/>
 </package>
+<package name="MORSETTIERE-4">
+<wire x1="-10" y1="2.5" x2="-10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="10" y1="2.5" x2="10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="-7.5" y1="3.8" x2="7.7" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="7.7" y1="-3.8" x2="-7.5" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="-7.5" y1="-3.8" x2="-10" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3.8" x2="-10" y2="-3" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3" x2="-10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="7.7" y1="-3.8" x2="10" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="10" y1="-3.8" x2="10" y2="-3" width="0.1524" layer="21"/>
+<wire x1="10" y1="-3" x2="10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="10" y1="2.5" x2="10" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="10" y1="3.8" x2="7.7" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="2.5" x2="-10" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="3.8" x2="-7.5" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3" x2="10" y2="-3" width="0.1524" layer="21"/>
+<text x="-10" y="-6" size="1.778" layer="25">&gt;NAME</text>
+<pad name="A" x="-7.62" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="B" x="-2.54" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="C" x="2.54" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="D" x="7.62" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="ARDUINO_NANO" urn="urn:adsk.eagle:package:16064398/3" type="model">
@@ -6478,7 +6500,7 @@ BUTTON</text>
 <wire x1="1.27" y1="0" x2="0" y2="1.905" width="0.254" layer="94"/>
 <wire x1="0" y1="1.905" x2="-1.27" y2="0" width="0.254" layer="94"/>
 <text x="-2.54" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="+5V" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
+<pin name="+3.3V" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
 <wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
 </symbol>
 <symbol name="78XX">
@@ -6516,6 +6538,17 @@ BUTTON</text>
 <rectangle x1="-1.651" y1="-2.54" x2="1.651" y2="-1.651" layer="94"/>
 <pin name="-" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
 <pin name="+" x="0" y="2.54" visible="off" length="short" direction="pas" rot="R270"/>
+</symbol>
+<symbol name="MORSETTIERE-4">
+<wire x1="0" y1="0" x2="5.08" y2="0" width="0.1524" layer="94"/>
+<wire x1="5.08" y1="0" x2="5.08" y2="-12.7" width="0.1524" layer="94"/>
+<wire x1="5.08" y1="-12.7" x2="0" y2="-12.7" width="0.1524" layer="94"/>
+<wire x1="0" y1="-12.7" x2="0" y2="0" width="0.1524" layer="94"/>
+<pin name="A" x="7.62" y="-2.54" visible="off" length="middle" rot="R180"/>
+<pin name="B" x="7.62" y="-5.08" visible="off" length="middle" rot="R180"/>
+<pin name="C" x="7.62" y="-7.62" visible="off" length="middle" rot="R180"/>
+<pin name="D" x="7.62" y="-10.16" visible="off" length="middle" rot="R180"/>
+<text x="0" y="-15.24" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -6978,6 +7011,24 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <connects>
 <connect gate="G$1" pin="+" pad="+"/>
 <connect gate="G$1" pin="-" pad="-"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="MORSETTIERE-4" prefix="CONN">
+<gates>
+<gate name="G$1" symbol="MORSETTIERE-4" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="MORSETTIERE-4">
+<connects>
+<connect gate="G$1" pin="A" pad="A"/>
+<connect gate="G$1" pin="B" pad="B"/>
+<connect gate="G$1" pin="C" pad="C"/>
+<connect gate="G$1" pin="D" pad="D"/>
 </connects>
 <technologies>
 <technology name=""/>

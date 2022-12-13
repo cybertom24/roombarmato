@@ -448,6 +448,28 @@ grid 2.54 mm, diameter 5 mm</description>
 <text x="2.413" y="-2.413" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 <rectangle x1="0.254" y1="-1.27" x2="0.762" y2="1.27" layer="51"/>
 </package>
+<package name="MORSETTIERE-4">
+<wire x1="-10" y1="2.5" x2="-10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="10" y1="2.5" x2="10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="-7.5" y1="3.8" x2="7.7" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="7.7" y1="-3.8" x2="-7.5" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="-7.5" y1="-3.8" x2="-10" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3.8" x2="-10" y2="-3" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3" x2="-10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="7.7" y1="-3.8" x2="10" y2="-3.8" width="0.1524" layer="21"/>
+<wire x1="10" y1="-3.8" x2="10" y2="-3" width="0.1524" layer="21"/>
+<wire x1="10" y1="-3" x2="10" y2="-2.5" width="0.1524" layer="21"/>
+<wire x1="10" y1="2.5" x2="10" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="10" y1="3.8" x2="7.7" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="2.5" x2="-10" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="3.8" x2="-7.5" y2="3.8" width="0.1524" layer="21"/>
+<wire x1="-10" y1="-3" x2="10" y2="-3" width="0.1524" layer="21"/>
+<text x="-10" y="-6" size="1.778" layer="25">&gt;NAME</text>
+<pad name="A" x="-7.62" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="B" x="-2.54" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="C" x="2.54" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+<pad name="D" x="7.62" y="0" drill="1.2" diameter="2.54" shape="octagon"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="1X4-CONNECTOR" urn="urn:adsk.eagle:package:17815777/5" type="model">
@@ -778,7 +800,7 @@ BUTTON</text>
 <wire x1="1.27" y1="0" x2="0" y2="1.905" width="0.254" layer="94"/>
 <wire x1="0" y1="1.905" x2="-1.27" y2="0" width="0.254" layer="94"/>
 <text x="-2.54" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="+5V" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
+<pin name="+3.3V" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
 <wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
 </symbol>
 <symbol name="78XX">
@@ -806,6 +828,17 @@ BUTTON</text>
 <rectangle x1="-1.651" y1="-2.54" x2="1.651" y2="-1.651" layer="94"/>
 <pin name="-" x="0" y="-5.08" visible="off" length="short" direction="pas" rot="R90"/>
 <pin name="+" x="0" y="2.54" visible="off" length="short" direction="pas" rot="R270"/>
+</symbol>
+<symbol name="MORSETTIERE-4">
+<wire x1="0" y1="0" x2="5.08" y2="0" width="0.1524" layer="94"/>
+<wire x1="5.08" y1="0" x2="5.08" y2="-12.7" width="0.1524" layer="94"/>
+<wire x1="5.08" y1="-12.7" x2="0" y2="-12.7" width="0.1524" layer="94"/>
+<wire x1="0" y1="-12.7" x2="0" y2="0" width="0.1524" layer="94"/>
+<pin name="A" x="7.62" y="-2.54" visible="off" length="middle" rot="R180"/>
+<pin name="B" x="7.62" y="-5.08" visible="off" length="middle" rot="R180"/>
+<pin name="C" x="7.62" y="-7.62" visible="off" length="middle" rot="R180"/>
+<pin name="D" x="7.62" y="-10.16" visible="off" length="middle" rot="R180"/>
+<text x="0" y="-15.24" size="1.778" layer="95">&gt;NAME</text>
 </symbol>
 </symbols>
 <devicesets>
@@ -1245,6 +1278,24 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </device>
 </devices>
 </deviceset>
+<deviceset name="MORSETTIERE-4" prefix="CONN">
+<gates>
+<gate name="G$1" symbol="MORSETTIERE-4" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="MORSETTIERE-4">
+<connects>
+<connect gate="G$1" pin="A" pad="A"/>
+<connect gate="G$1" pin="B" pad="B"/>
+<connect gate="G$1" pin="C" pad="C"/>
+<connect gate="G$1" pin="D" pad="D"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </libraries>
@@ -1263,9 +1314,9 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="ESP" library="roombarmato_eagle_lib" deviceset="CONNECTOR-8" device="2X4-CONNECTOR" package3d_urn="urn:adsk.eagle:package:17815773/5"/>
 <part name="GND2" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="MP3" library="roombarmato_eagle_lib" deviceset="CONNECTOR-4" device="" package3d_urn="urn:adsk.eagle:package:17815777/5"/>
-<part name="SUP3" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
-<part name="SUP2" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
-<part name="SUP1" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP_3" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP_5" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP_12" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
 <part name="P+4" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 <part name="GND1" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="MOTORS" library="roombarmato_eagle_lib" deviceset="CONNECTOR-6" device="" package3d_urn="urn:adsk.eagle:package:17815776/5"/>
@@ -1296,6 +1347,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="P+8" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 <part name="P+9" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="GND8" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
+<part name="ROCKETS" library="roombarmato_eagle_lib" deviceset="MORSETTIERE-4" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1320,14 +1372,14 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <instance part="MP3" gate="G$1" x="-55.88" y="36.83" smashed="yes" rot="R180">
 <attribute name="NAME" x="-55.88" y="24.13" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP3" gate="G$1" x="-11.43" y="29.21" smashed="yes" rot="R180">
-<attribute name="NAME" x="-8.89" y="21.59" size="1.27" layer="95" rot="R180"/>
+<instance part="SUP_3" gate="G$1" x="-11.43" y="29.21" smashed="yes" rot="R180">
+<attribute name="NAME" x="-8.89" y="22.86" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP2" gate="G$1" x="-11.43" y="44.45" smashed="yes" rot="R180">
-<attribute name="NAME" x="-8.89" y="36.83" size="1.27" layer="95" rot="R180"/>
+<instance part="SUP_5" gate="G$1" x="-11.43" y="44.45" smashed="yes" rot="R180">
+<attribute name="NAME" x="-8.89" y="38.1" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP1" gate="G$1" x="-11.43" y="59.69" smashed="yes" rot="R180">
-<attribute name="NAME" x="-8.89" y="52.07" size="1.27" layer="95" rot="R180"/>
+<instance part="SUP_12" gate="G$1" x="-11.43" y="59.69" smashed="yes" rot="R180">
+<attribute name="NAME" x="-8.89" y="53.34" size="1.27" layer="95" rot="R180"/>
 </instance>
 <instance part="P+4" gate="1" x="1.27" y="69.85" smashed="yes">
 <attribute name="VALUE" x="-1.27" y="64.77" size="1.778" layer="96" rot="R90"/>
@@ -1429,6 +1481,9 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <instance part="GND8" gate="1" x="66.04" y="43.18" smashed="yes">
 <attribute name="VALUE" x="63.5" y="40.64" size="1.778" layer="96"/>
 </instance>
+<instance part="ROCKETS" gate="G$1" x="95.25" y="27.94" smashed="yes" rot="R180">
+<attribute name="NAME" x="95.25" y="43.18" size="1.778" layer="95" rot="R180"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -1439,13 +1494,9 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <wire x1="20.32" y1="12.7" x2="22.86" y2="12.7" width="0.1524" layer="91"/>
 <pinref part="P+2" gate="1" pin="+12V"/>
 <wire x1="22.86" y1="12.7" x2="22.86" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="G$1" pin="!RESET@2"/>
-<wire x1="20.32" y1="7.62" x2="22.86" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="22.86" y1="7.62" x2="22.86" y2="12.7" width="0.1524" layer="91"/>
-<junction x="22.86" y="12.7"/>
 </segment>
 <segment>
-<pinref part="SUP1" gate="G$1" pin="P$1"/>
+<pinref part="SUP_12" gate="G$1" pin="P$1"/>
 <pinref part="P+4" gate="1" pin="+12V"/>
 <wire x1="-5.08" y1="62.23" x2="1.27" y2="62.23" width="0.1524" layer="91"/>
 <wire x1="1.27" y1="62.23" x2="1.27" y2="67.31" width="0.1524" layer="91"/>
@@ -1492,15 +1543,15 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <label x="-48.26" y="44.45" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SUP3" gate="G$1" pin="P$2"/>
+<pinref part="SUP_3" gate="G$1" pin="P$2"/>
 <wire x1="-5.08" y1="26.67" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
 <wire x1="6.35" y1="26.67" x2="6.35" y2="24.13" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
-<pinref part="SUP1" gate="G$1" pin="P$2"/>
+<pinref part="SUP_12" gate="G$1" pin="P$2"/>
 <wire x1="-5.08" y1="57.15" x2="6.35" y2="57.15" width="0.1524" layer="91"/>
 <wire x1="6.35" y1="57.15" x2="6.35" y2="41.91" width="0.1524" layer="91"/>
 <junction x="6.35" y="26.67"/>
-<pinref part="SUP2" gate="G$1" pin="P$2"/>
+<pinref part="SUP_5" gate="G$1" pin="P$2"/>
 <wire x1="6.35" y1="41.91" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
 <wire x1="-5.08" y1="41.91" x2="6.35" y2="41.91" width="0.1524" layer="91"/>
 <junction x="6.35" y="41.91"/>
@@ -1617,30 +1668,10 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <label x="-48.26" y="-54.61" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SUP3" gate="G$1" pin="P$1"/>
-<pinref part="P+3" gate="G$1" pin="+5V"/>
-<wire x1="-5.08" y1="31.75" x2="1.27" y2="31.75" width="0.1524" layer="91"/>
-<wire x1="1.27" y1="31.75" x2="1.27" y2="35.56" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="SUP2" gate="G$1" pin="P$1"/>
+<pinref part="SUP_5" gate="G$1" pin="P$1"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
 <wire x1="-5.08" y1="46.99" x2="1.27" y2="46.99" width="0.1524" layer="91"/>
 <wire x1="1.27" y1="46.99" x2="1.27" y2="52.07" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="ESP" gate="G$1" pin="P$1"/>
-<pinref part="P+5" gate="G$1" pin="+5V"/>
-<wire x1="-49.53" y1="12.7" x2="-44.45" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="-44.45" y1="12.7" x2="-44.45" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="ESP" gate="G$1" pin="P$2"/>
-<wire x1="-49.53" y1="7.62" x2="-44.45" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="-44.45" y1="7.62" x2="-44.45" y2="12.7" width="0.1524" layer="91"/>
-<junction x="-44.45" y="12.7"/>
-<pinref part="ESP" gate="G$1" pin="P$3"/>
-<wire x1="-49.53" y1="2.54" x2="-44.45" y2="2.54" width="0.1524" layer="91"/>
-<wire x1="-44.45" y1="2.54" x2="-44.45" y2="7.62" width="0.1524" layer="91"/>
-<junction x="-44.45" y="7.62"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="1" pin="OUT"/>
@@ -1650,15 +1681,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <junction x="40.64" y="62.23"/>
 <pinref part="P+7" gate="1" pin="+5V"/>
 <wire x1="40.64" y1="62.23" x2="40.64" y2="68.58" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="IC3" gate="1" pin="OUT"/>
-<wire x1="73.66" y1="62.23" x2="78.74" y2="62.23" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="62.23" x2="78.74" y2="58.42" width="0.1524" layer="91"/>
-<pinref part="C4" gate="G$1" pin="+"/>
-<pinref part="P+9" gate="G$1" pin="+5V"/>
-<wire x1="78.74" y1="62.23" x2="78.74" y2="67.31" width="0.1524" layer="91"/>
-<junction x="78.74" y="62.23"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -1827,12 +1849,22 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <wire x1="60.96" y1="16.51" x2="60.96" y2="17.78" width="0.1524" layer="91"/>
 <label x="60.96" y="17.78" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
+<segment>
+<pinref part="ROCKETS" gate="G$1" pin="D"/>
+<wire x1="87.63" y1="38.1" x2="86.36" y2="38.1" width="0.1524" layer="91"/>
+<label x="86.36" y="38.1" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="R1" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="D"/>
 <wire x1="81.28" y1="16.51" x2="81.28" y2="17.78" width="0.1524" layer="91"/>
 <label x="81.28" y="17.78" size="1.778" layer="95" rot="R90" xref="yes"/>
+</segment>
+<segment>
+<pinref part="ROCKETS" gate="G$1" pin="C"/>
+<wire x1="87.63" y1="35.56" x2="86.36" y2="35.56" width="0.1524" layer="91"/>
+<label x="86.36" y="35.56" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="R2" class="0">
@@ -1841,6 +1873,11 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <wire x1="101.6" y1="16.51" x2="101.6" y2="17.78" width="0.1524" layer="91"/>
 <label x="101.6" y="17.78" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
+<segment>
+<pinref part="ROCKETS" gate="G$1" pin="B"/>
+<wire x1="87.63" y1="33.02" x2="86.36" y2="33.02" width="0.1524" layer="91"/>
+<label x="86.36" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="R3" class="0">
 <segment>
@@ -1848,10 +1885,52 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <wire x1="121.92" y1="16.51" x2="121.92" y2="17.78" width="0.1524" layer="91"/>
 <label x="121.92" y="17.78" size="1.778" layer="95" rot="R90" xref="yes"/>
 </segment>
+<segment>
+<pinref part="ROCKETS" gate="G$1" pin="A"/>
+<wire x1="87.63" y1="30.48" x2="86.36" y2="30.48" width="0.1524" layer="91"/>
+<label x="86.36" y="30.48" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="+3.3V" class="0">
+<segment>
+<pinref part="IC3" gate="1" pin="OUT"/>
+<wire x1="73.66" y1="62.23" x2="78.74" y2="62.23" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="62.23" x2="78.74" y2="67.31" width="0.1524" layer="91"/>
+<pinref part="P+9" gate="G$1" pin="+3.3V"/>
+<pinref part="C4" gate="G$1" pin="+"/>
+<wire x1="78.74" y1="62.23" x2="78.74" y2="58.42" width="0.1524" layer="91"/>
+<junction x="78.74" y="62.23"/>
+</segment>
+<segment>
+<pinref part="ESP" gate="G$1" pin="P$1"/>
+<wire x1="-49.53" y1="12.7" x2="-44.45" y2="12.7" width="0.1524" layer="91"/>
+<wire x1="-44.45" y1="12.7" x2="-44.45" y2="7.62" width="0.1524" layer="91"/>
+<pinref part="ESP" gate="G$1" pin="P$3"/>
+<wire x1="-44.45" y1="7.62" x2="-44.45" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="-44.45" y1="2.54" x2="-49.53" y2="2.54" width="0.1524" layer="91"/>
+<pinref part="ESP" gate="G$1" pin="P$2"/>
+<wire x1="-49.53" y1="7.62" x2="-44.45" y2="7.62" width="0.1524" layer="91"/>
+<junction x="-44.45" y="7.62"/>
+<pinref part="P+5" gate="G$1" pin="+3.3V"/>
+<wire x1="-44.45" y1="12.7" x2="-44.45" y2="17.78" width="0.1524" layer="91"/>
+<junction x="-44.45" y="12.7"/>
+</segment>
+<segment>
+<pinref part="P+3" gate="G$1" pin="+3.3V"/>
+<wire x1="1.27" y1="31.75" x2="1.27" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="SUP_3" gate="G$1" pin="P$1"/>
+<wire x1="-5.08" y1="31.75" x2="1.27" y2="31.75" width="0.1524" layer="91"/>
+</segment>
 </net>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="202,1,-20.32,7.62,IC1,!RESET,,,,"/>
+<approved hash="202,1,20.32,-17.78,IC1,AREF,,,,"/>
+<approved hash="204,1,20.32,5.08,IC1,5V,,,,"/>
+<approved hash="202,1,20.32,7.62,IC1,!RESET,,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>
