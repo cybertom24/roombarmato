@@ -1335,23 +1335,22 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="GND4" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="P+3" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="P+5" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
-<part name="IC2" library="roombarmato_eagle_lib" deviceset="78XXS" device="" value="7805"/>
 <part name="IC3" library="roombarmato_eagle_lib" deviceset="78XXS" device="" value="LD1117V33"/>
-<part name="P+6" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
-<part name="GND7" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
-<part name="C1" library="roombarmato_eagle_lib" deviceset="CPOL-EU" device="E2.5-5"/>
-<part name="C2" library="roombarmato_eagle_lib" deviceset="CPOL-EU" device="E2.5-5"/>
 <part name="C3" library="roombarmato_eagle_lib" deviceset="CPOL-EU" device="E2.5-5"/>
 <part name="C4" library="roombarmato_eagle_lib" deviceset="CPOL-EU" device="E2.5-5"/>
-<part name="P+7" library="roombarmato_eagle_lib" deviceset="+5V" device=""/>
 <part name="P+8" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 <part name="P+9" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="GND8" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="ROCKETS" library="roombarmato_eagle_lib" deviceset="MORSETTIERE-4" device=""/>
+<part name="+11.1V" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="P+6" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 </parts>
 <sheets>
 <sheet>
 <plain>
+<text x="16.51" y="48.26" size="1.778" layer="96">Note: 
+i 5V sono forniti da
+un buck converter esterno</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="0" y="0" smashed="yes">
@@ -1398,7 +1397,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </instance>
 <instance part="R1" gate="G$1" x="54.61" y="1.27" smashed="yes" rot="R90">
 <attribute name="NAME" x="49.53" y="-3.81" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="59.69" y="-3.81" size="1.27" layer="96" rot="R90"/>
+<attribute name="VALUE" x="52.07" y="-3.81" size="1.27" layer="96" rot="R90"/>
 </instance>
 <instance part="U$2" gate="G$1" x="81.28" y="11.43" smashed="yes">
 <attribute name="NAME" x="73.66" y="12.7" size="1.778" layer="95" rot="MR180"/>
@@ -1408,7 +1407,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </instance>
 <instance part="R2" gate="G$1" x="74.93" y="1.27" smashed="yes" rot="R90">
 <attribute name="NAME" x="69.85" y="-3.81" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="80.01" y="-3.81" size="1.27" layer="96" rot="R90"/>
+<attribute name="VALUE" x="72.39" y="-3.81" size="1.27" layer="96" rot="R90"/>
 </instance>
 <instance part="U$3" gate="G$1" x="101.6" y="11.43" smashed="yes">
 <attribute name="NAME" x="93.98" y="12.7" size="1.778" layer="95" rot="MR180"/>
@@ -1418,7 +1417,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </instance>
 <instance part="R3" gate="G$1" x="95.25" y="1.27" smashed="yes" rot="R90">
 <attribute name="NAME" x="90.17" y="-3.81" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="100.33" y="-3.81" size="1.27" layer="96" rot="R90"/>
+<attribute name="VALUE" x="92.71" y="-3.81" size="1.27" layer="96" rot="R90"/>
 </instance>
 <instance part="U$4" gate="G$1" x="121.92" y="11.43" smashed="yes">
 <attribute name="NAME" x="114.3" y="12.7" size="1.778" layer="95" rot="MR180"/>
@@ -1428,7 +1427,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </instance>
 <instance part="R4" gate="G$1" x="115.57" y="1.27" smashed="yes" rot="R90">
 <attribute name="NAME" x="110.49" y="-3.81" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="120.65" y="-3.81" size="1.27" layer="96" rot="R90"/>
+<attribute name="VALUE" x="113.03" y="-3.81" size="1.27" layer="96" rot="R90"/>
 </instance>
 <instance part="GND4" gate="1" x="54.61" y="-11.43" smashed="yes">
 <attribute name="VALUE" x="52.07" y="-13.97" size="1.778" layer="96"/>
@@ -1439,27 +1438,9 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <instance part="P+5" gate="G$1" x="-44.45" y="20.32" smashed="yes">
 <attribute name="VALUE" x="-46.99" y="15.24" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="IC2" gate="1" x="27.94" y="62.23" smashed="yes">
-<attribute name="NAME" x="22.86" y="68.58" size="1.778" layer="95"/>
-<attribute name="VALUE" x="22.86" y="66.04" size="1.778" layer="96"/>
-</instance>
 <instance part="IC3" gate="1" x="66.04" y="62.23" smashed="yes">
 <attribute name="NAME" x="60.96" y="68.58" size="1.778" layer="95"/>
 <attribute name="VALUE" x="59.69" y="66.04" size="1.778" layer="96"/>
-</instance>
-<instance part="P+6" gate="1" x="15.24" y="69.85" smashed="yes">
-<attribute name="VALUE" x="12.7" y="64.77" size="1.778" layer="96" rot="R90"/>
-</instance>
-<instance part="GND7" gate="1" x="27.94" y="43.18" smashed="yes">
-<attribute name="VALUE" x="25.4" y="40.64" size="1.778" layer="96"/>
-</instance>
-<instance part="C1" gate="G$1" x="15.24" y="55.88" smashed="yes">
-<attribute name="NAME" x="16.383" y="56.3626" size="1.778" layer="95"/>
-<attribute name="VALUE" x="16.383" y="51.2826" size="1.778" layer="96"/>
-</instance>
-<instance part="C2" gate="G$1" x="40.64" y="55.88" smashed="yes">
-<attribute name="NAME" x="41.783" y="56.3626" size="1.778" layer="95"/>
-<attribute name="VALUE" x="41.783" y="51.2826" size="1.778" layer="96"/>
 </instance>
 <instance part="C3" gate="G$1" x="53.34" y="55.88" smashed="yes">
 <attribute name="NAME" x="54.483" y="56.3626" size="1.778" layer="95"/>
@@ -1468,9 +1449,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <instance part="C4" gate="G$1" x="78.74" y="55.88" smashed="yes">
 <attribute name="NAME" x="79.883" y="56.3626" size="1.778" layer="95"/>
 <attribute name="VALUE" x="79.883" y="51.2826" size="1.778" layer="96"/>
-</instance>
-<instance part="P+7" gate="1" x="40.64" y="71.12" smashed="yes">
-<attribute name="VALUE" x="38.1" y="66.04" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="P+8" gate="1" x="53.34" y="69.85" smashed="yes">
 <attribute name="VALUE" x="50.8" y="64.77" size="1.778" layer="96" rot="R90"/>
@@ -1481,8 +1459,14 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <instance part="GND8" gate="1" x="66.04" y="43.18" smashed="yes">
 <attribute name="VALUE" x="63.5" y="40.64" size="1.778" layer="96"/>
 </instance>
-<instance part="ROCKETS" gate="G$1" x="95.25" y="27.94" smashed="yes" rot="R180">
-<attribute name="NAME" x="95.25" y="43.18" size="1.778" layer="95" rot="R180"/>
+<instance part="ROCKETS" gate="G$1" x="105.41" y="27.94" smashed="yes" rot="R180">
+<attribute name="NAME" x="105.41" y="43.18" size="1.778" layer="95" rot="R180"/>
+</instance>
+<instance part="+11.1V" gate="G$1" x="104.14" y="50.8" smashed="yes">
+<attribute name="NAME" x="101.6" y="57.15" size="1.27" layer="95"/>
+</instance>
+<instance part="P+6" gate="1" x="95.25" y="59.69" smashed="yes">
+<attribute name="VALUE" x="92.71" y="54.61" size="1.778" layer="96" rot="R90"/>
 </instance>
 </instances>
 <busses>
@@ -1502,15 +1486,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <wire x1="1.27" y1="62.23" x2="1.27" y2="67.31" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="P+6" gate="1" pin="+12V"/>
-<wire x1="15.24" y1="67.31" x2="15.24" y2="62.23" width="0.1524" layer="91"/>
-<pinref part="IC2" gate="1" pin="IN"/>
-<wire x1="15.24" y1="62.23" x2="20.32" y2="62.23" width="0.1524" layer="91"/>
-<pinref part="C1" gate="G$1" pin="+"/>
-<wire x1="15.24" y1="58.42" x2="15.24" y2="62.23" width="0.1524" layer="91"/>
-<junction x="15.24" y="62.23"/>
-</segment>
-<segment>
 <pinref part="P+8" gate="1" pin="+12V"/>
 <wire x1="53.34" y1="67.31" x2="53.34" y2="62.23" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="1" pin="IN"/>
@@ -1518,6 +1493,16 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <pinref part="C3" gate="G$1" pin="+"/>
 <wire x1="53.34" y1="58.42" x2="53.34" y2="62.23" width="0.1524" layer="91"/>
 <junction x="53.34" y="62.23"/>
+</segment>
+<segment>
+<pinref part="+11.1V" gate="G$1" pin="P$1"/>
+<wire x1="97.79" y1="48.26" x2="95.25" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="95.25" y1="48.26" x2="95.25" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="+11.1V" gate="G$1" pin="P$2"/>
+<wire x1="95.25" y1="53.34" x2="97.79" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="95.25" y1="53.34" x2="95.25" y2="57.15" width="0.1524" layer="91"/>
+<junction x="95.25" y="53.34"/>
+<pinref part="P+6" gate="1" pin="+12V"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -1607,19 +1592,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="IC2" gate="1" pin="GND"/>
-<pinref part="GND7" gate="1" pin="GND"/>
-<wire x1="27.94" y1="45.72" x2="27.94" y2="48.26" width="0.1524" layer="91"/>
-<pinref part="C1" gate="G$1" pin="-"/>
-<wire x1="27.94" y1="48.26" x2="27.94" y2="54.61" width="0.1524" layer="91"/>
-<wire x1="15.24" y1="50.8" x2="15.24" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="15.24" y1="48.26" x2="27.94" y2="48.26" width="0.1524" layer="91"/>
-<junction x="27.94" y="48.26"/>
-<pinref part="C2" gate="G$1" pin="-"/>
-<wire x1="40.64" y1="50.8" x2="40.64" y2="48.26" width="0.1524" layer="91"/>
-<wire x1="40.64" y1="48.26" x2="27.94" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <pinref part="C3" gate="G$1" pin="-"/>
 <wire x1="53.34" y1="50.8" x2="53.34" y2="48.26" width="0.1524" layer="91"/>
 <pinref part="IC3" gate="1" pin="GND"/>
@@ -1672,15 +1644,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <pinref part="P+1" gate="1" pin="+5V"/>
 <wire x1="-5.08" y1="46.99" x2="1.27" y2="46.99" width="0.1524" layer="91"/>
 <wire x1="1.27" y1="46.99" x2="1.27" y2="52.07" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="IC2" gate="1" pin="OUT"/>
-<wire x1="35.56" y1="62.23" x2="40.64" y2="62.23" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="+"/>
-<wire x1="40.64" y1="62.23" x2="40.64" y2="58.42" width="0.1524" layer="91"/>
-<junction x="40.64" y="62.23"/>
-<pinref part="P+7" gate="1" pin="+5V"/>
-<wire x1="40.64" y1="62.23" x2="40.64" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -1851,8 +1814,8 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </segment>
 <segment>
 <pinref part="ROCKETS" gate="G$1" pin="D"/>
-<wire x1="87.63" y1="38.1" x2="86.36" y2="38.1" width="0.1524" layer="91"/>
-<label x="86.36" y="38.1" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="97.79" y1="38.1" x2="96.52" y2="38.1" width="0.1524" layer="91"/>
+<label x="96.52" y="38.1" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="R1" class="0">
@@ -1863,8 +1826,8 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </segment>
 <segment>
 <pinref part="ROCKETS" gate="G$1" pin="C"/>
-<wire x1="87.63" y1="35.56" x2="86.36" y2="35.56" width="0.1524" layer="91"/>
-<label x="86.36" y="35.56" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="97.79" y1="35.56" x2="96.52" y2="35.56" width="0.1524" layer="91"/>
+<label x="96.52" y="35.56" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="R2" class="0">
@@ -1875,8 +1838,8 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </segment>
 <segment>
 <pinref part="ROCKETS" gate="G$1" pin="B"/>
-<wire x1="87.63" y1="33.02" x2="86.36" y2="33.02" width="0.1524" layer="91"/>
-<label x="86.36" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="97.79" y1="33.02" x2="96.52" y2="33.02" width="0.1524" layer="91"/>
+<label x="96.52" y="33.02" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="R3" class="0">
@@ -1887,8 +1850,8 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </segment>
 <segment>
 <pinref part="ROCKETS" gate="G$1" pin="A"/>
-<wire x1="87.63" y1="30.48" x2="86.36" y2="30.48" width="0.1524" layer="91"/>
-<label x="86.36" y="30.48" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="97.79" y1="30.48" x2="96.52" y2="30.48" width="0.1524" layer="91"/>
+<label x="96.52" y="30.48" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="+3.3V" class="0">

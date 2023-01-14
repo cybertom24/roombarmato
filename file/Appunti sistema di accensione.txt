@@ -1,0 +1,24 @@
+Batteria scelta per il lancio dei missili: 18650 Sony vtc6
+-> Tensione nominale: 3,7V
+-> Corrente di scarica: 10A
+-> Resistenza: 0,4 Ohm (comprendendo i contatti e la resistenza interna)
+-> A 10A e 3000mAh si hanno a disposizione ~270 scariche da 4s
+
+Controllo:
+MOSFET di potenza: MCU80N03A
+	-> Corrente continua D-S = 80A
+	-> Potenza dissipata (80A) = 45W
+	-> Rds = 6mOhm
+
+	-> a 10A di Ids e una Rds di 6mOhm si ha una potenza di 0.06W
+
+Resistenza canna:
+-> Tetto max 1.5 Ohm
+
+sommando resistenza, contatti ed eventuali perdite si arriva a 2Ohm
+volendo una corrente di almeno 6A ho bisogno di una tensione di almeno 12V
+
+Pacco batteria https://www.amazon.it/dp/B07S36CXKG/ref=redir_mobile_desktop?_encoding=UTF8&aaxitk=dddd659349beabe69b4e39dc738497bf&content-id=amzn1.sym.dc1c6a9f-b619-4438-ae80-2c4df48fceac%3Aamzn1.sym.dc1c6a9f-b619-4438-ae80-2c4df48fceac&hsa_cr_id=1224061030202&pd_rd_plhdr=t&pd_rd_r=f8aeac1f-c076-427a-9bc6-85c8f2635bd0&pd_rd_w=aaxTc&pd_rd_wg=XmKCD&qid=1673712100&ref_=sbx_be_s_sparkle_mcd_asin_0_title&sr=1-1-e0fa1fdd-d857-4087-adda-5bd576b25987
+-> Tensione: 11.1V
+-> Capacità: 1.2Ah
+-> Scarica: 20C (= 20C * 1.2Ah = 24A) (continui) / 50C (= 50C * 1.2Ah = 60A) (burst)
