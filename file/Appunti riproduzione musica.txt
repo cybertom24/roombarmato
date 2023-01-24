@@ -1,0 +1,3 @@
+Per amplificare il segnale uscito dal jack 3.5mm del modulo MP3 usiamo un LM380 che è un amplificatore di potenza mono alimentazione (solo +vcc e gnd al posto di +vcc e -vcc) che amplifica fino a 2.5W per un impedenza di 4Ohm. 
+L'altoparlante è da 1W 4Ohm quindi va perfetto.
+Alimentiamo LM380 con +12V e GND e poi usiamo un potenziometro per impostare il corretto livello di guadagno.
