@@ -1314,9 +1314,8 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="ESP" library="roombarmato_eagle_lib" deviceset="CONNECTOR-8" device="2X4-CONNECTOR" package3d_urn="urn:adsk.eagle:package:17815773/5"/>
 <part name="GND2" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="MP3" library="roombarmato_eagle_lib" deviceset="CONNECTOR-4" device="" package3d_urn="urn:adsk.eagle:package:17815777/5"/>
-<part name="SUP_3" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
-<part name="SUP_5" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
-<part name="SUP_12" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP_+5V" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP_+12V" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
 <part name="P+4" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 <part name="GND1" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="MOTORS" library="roombarmato_eagle_lib" deviceset="CONNECTOR-6" device="" package3d_urn="urn:adsk.eagle:package:17815776/5"/>
@@ -1333,7 +1332,6 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="GND6" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="R4" library="roombarmato_eagle_lib" deviceset="RESISTOR" device="1206" package3d_urn="urn:adsk.eagle:package:17825322/7" value="10k"/>
 <part name="GND4" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
-<part name="P+3" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="P+5" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="IC3" library="roombarmato_eagle_lib" deviceset="78XXS" device="" value="LD1117V33"/>
 <part name="C3" library="roombarmato_eagle_lib" deviceset="CPOL-EU" device="E2.5-5"/>
@@ -1342,7 +1340,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <part name="P+9" library="roombarmato_eagle_lib" deviceset="+3.3V" device=""/>
 <part name="GND8" library="roombarmato_eagle_lib" deviceset="GND" device=""/>
 <part name="ROCKETS" library="roombarmato_eagle_lib" deviceset="MORSETTIERE-4" device=""/>
-<part name="+11.1V" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
+<part name="SUP1_+12V" library="roombarmato_eagle_lib" deviceset="AK500" device="" package3d_urn="urn:adsk.eagle:package:17855270/2"/>
 <part name="P+6" library="roombarmato_eagle_lib" deviceset="+12V" device=""/>
 </parts>
 <sheets>
@@ -1350,14 +1348,16 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 <plain>
 <text x="16.51" y="48.26" size="1.778" layer="96">Note: 
 i 5V sono forniti da
-un buck converter esterno</text>
+un buck converter esterno
+Come amplificatore audio
+usare LM380</text>
 </plain>
 <instances>
 <instance part="IC1" gate="G$1" x="0" y="0" smashed="yes">
 <attribute name="NAME" x="-15.24" y="-30.48" size="1.778" layer="95"/>
 </instance>
-<instance part="P+1" gate="1" x="1.27" y="54.61" smashed="yes">
-<attribute name="VALUE" x="-1.27" y="49.53" size="1.778" layer="96" rot="R90"/>
+<instance part="P+1" gate="1" x="1.27" y="39.37" smashed="yes">
+<attribute name="VALUE" x="-1.27" y="34.29" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="P+2" gate="1" x="22.86" y="20.32" smashed="yes">
 <attribute name="VALUE" x="20.32" y="15.24" size="1.778" layer="96" rot="R90"/>
@@ -1371,17 +1371,14 @@ un buck converter esterno</text>
 <instance part="MP3" gate="G$1" x="-55.88" y="36.83" smashed="yes" rot="R180">
 <attribute name="NAME" x="-55.88" y="24.13" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP_3" gate="G$1" x="-11.43" y="29.21" smashed="yes" rot="R180">
+<instance part="SUP_+5V" gate="G$1" x="-11.43" y="29.21" smashed="yes" rot="R180">
 <attribute name="NAME" x="-8.89" y="22.86" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP_5" gate="G$1" x="-11.43" y="44.45" smashed="yes" rot="R180">
+<instance part="SUP_+12V" gate="G$1" x="-11.43" y="44.45" smashed="yes" rot="R180">
 <attribute name="NAME" x="-8.89" y="38.1" size="1.27" layer="95" rot="R180"/>
 </instance>
-<instance part="SUP_12" gate="G$1" x="-11.43" y="59.69" smashed="yes" rot="R180">
-<attribute name="NAME" x="-8.89" y="53.34" size="1.27" layer="95" rot="R180"/>
-</instance>
-<instance part="P+4" gate="1" x="1.27" y="69.85" smashed="yes">
-<attribute name="VALUE" x="-1.27" y="64.77" size="1.778" layer="96" rot="R90"/>
+<instance part="P+4" gate="1" x="1.27" y="54.61" smashed="yes">
+<attribute name="VALUE" x="-1.27" y="49.53" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="GND1" gate="1" x="6.35" y="21.59" smashed="yes">
 <attribute name="VALUE" x="3.81" y="19.05" size="1.778" layer="96"/>
@@ -1432,9 +1429,6 @@ un buck converter esterno</text>
 <instance part="GND4" gate="1" x="54.61" y="-11.43" smashed="yes">
 <attribute name="VALUE" x="52.07" y="-13.97" size="1.778" layer="96"/>
 </instance>
-<instance part="P+3" gate="G$1" x="1.27" y="38.1" smashed="yes">
-<attribute name="VALUE" x="-1.27" y="33.02" size="1.778" layer="96" rot="R90"/>
-</instance>
 <instance part="P+5" gate="G$1" x="-44.45" y="20.32" smashed="yes">
 <attribute name="VALUE" x="-46.99" y="15.24" size="1.778" layer="96" rot="R90"/>
 </instance>
@@ -1462,7 +1456,7 @@ un buck converter esterno</text>
 <instance part="ROCKETS" gate="G$1" x="105.41" y="27.94" smashed="yes" rot="R180">
 <attribute name="NAME" x="105.41" y="43.18" size="1.778" layer="95" rot="R180"/>
 </instance>
-<instance part="+11.1V" gate="G$1" x="104.14" y="50.8" smashed="yes">
+<instance part="SUP1_+12V" gate="G$1" x="104.14" y="50.8" smashed="yes">
 <attribute name="NAME" x="101.6" y="57.15" size="1.27" layer="95"/>
 </instance>
 <instance part="P+6" gate="1" x="95.25" y="59.69" smashed="yes">
@@ -1480,10 +1474,10 @@ un buck converter esterno</text>
 <wire x1="22.86" y1="12.7" x2="22.86" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="SUP_12" gate="G$1" pin="P$1"/>
+<pinref part="SUP_+12V" gate="G$1" pin="P$1"/>
 <pinref part="P+4" gate="1" pin="+12V"/>
-<wire x1="-5.08" y1="62.23" x2="1.27" y2="62.23" width="0.1524" layer="91"/>
-<wire x1="1.27" y1="62.23" x2="1.27" y2="67.31" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="46.99" x2="1.27" y2="46.99" width="0.1524" layer="91"/>
+<wire x1="1.27" y1="46.99" x2="1.27" y2="52.07" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="P+8" gate="1" pin="+12V"/>
@@ -1495,10 +1489,10 @@ un buck converter esterno</text>
 <junction x="53.34" y="62.23"/>
 </segment>
 <segment>
-<pinref part="+11.1V" gate="G$1" pin="P$1"/>
+<pinref part="SUP1_+12V" gate="G$1" pin="P$1"/>
 <wire x1="97.79" y1="48.26" x2="95.25" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="95.25" y1="48.26" x2="95.25" y2="53.34" width="0.1524" layer="91"/>
-<pinref part="+11.1V" gate="G$1" pin="P$2"/>
+<pinref part="SUP1_+12V" gate="G$1" pin="P$2"/>
 <wire x1="95.25" y1="53.34" x2="97.79" y2="53.34" width="0.1524" layer="91"/>
 <wire x1="95.25" y1="53.34" x2="95.25" y2="57.15" width="0.1524" layer="91"/>
 <junction x="95.25" y="53.34"/>
@@ -1528,18 +1522,14 @@ un buck converter esterno</text>
 <label x="-48.26" y="44.45" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SUP_3" gate="G$1" pin="P$2"/>
-<wire x1="-5.08" y1="26.67" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
-<wire x1="6.35" y1="26.67" x2="6.35" y2="24.13" width="0.1524" layer="91"/>
 <pinref part="GND1" gate="1" pin="GND"/>
-<pinref part="SUP_12" gate="G$1" pin="P$2"/>
-<wire x1="-5.08" y1="57.15" x2="6.35" y2="57.15" width="0.1524" layer="91"/>
-<wire x1="6.35" y1="57.15" x2="6.35" y2="41.91" width="0.1524" layer="91"/>
-<junction x="6.35" y="26.67"/>
-<pinref part="SUP_5" gate="G$1" pin="P$2"/>
-<wire x1="6.35" y1="41.91" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
+<pinref part="SUP_+12V" gate="G$1" pin="P$2"/>
 <wire x1="-5.08" y1="41.91" x2="6.35" y2="41.91" width="0.1524" layer="91"/>
-<junction x="6.35" y="41.91"/>
+<wire x1="6.35" y1="41.91" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
+<pinref part="SUP_+5V" gate="G$1" pin="P$2"/>
+<wire x1="6.35" y1="26.67" x2="6.35" y2="24.13" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="26.67" x2="6.35" y2="26.67" width="0.1524" layer="91"/>
+<junction x="6.35" y="26.67"/>
 </segment>
 <segment>
 <pinref part="SERVO" gate="G$1" pin="P$1"/>
@@ -1640,10 +1630,10 @@ un buck converter esterno</text>
 <label x="-48.26" y="-54.61" size="1.778" layer="95" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SUP_5" gate="G$1" pin="P$1"/>
+<pinref part="SUP_+5V" gate="G$1" pin="P$1"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
-<wire x1="-5.08" y1="46.99" x2="1.27" y2="46.99" width="0.1524" layer="91"/>
-<wire x1="1.27" y1="46.99" x2="1.27" y2="52.07" width="0.1524" layer="91"/>
+<wire x1="-5.08" y1="31.75" x2="1.27" y2="31.75" width="0.1524" layer="91"/>
+<wire x1="1.27" y1="31.75" x2="1.27" y2="36.83" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -1877,12 +1867,6 @@ un buck converter esterno</text>
 <pinref part="P+5" gate="G$1" pin="+3.3V"/>
 <wire x1="-44.45" y1="12.7" x2="-44.45" y2="17.78" width="0.1524" layer="91"/>
 <junction x="-44.45" y="12.7"/>
-</segment>
-<segment>
-<pinref part="P+3" gate="G$1" pin="+3.3V"/>
-<wire x1="1.27" y1="31.75" x2="1.27" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="SUP_3" gate="G$1" pin="P$1"/>
-<wire x1="-5.08" y1="31.75" x2="1.27" y2="31.75" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
