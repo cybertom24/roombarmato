@@ -283,10 +283,6 @@
 &lt;p&gt;The Nano was designed and is being produced by Gravitech.&lt;br&gt;
 
 &lt;a href="http://www.gravitech.us/arna30wiatp.html"&gt;Gravitech Arduino Nano V3.0&lt;/a&gt;&lt;/p&gt;</description>
-<hole x="-22.86" y="-7.62" drill="1.778"/>
-<hole x="-22.86" y="7.62" drill="1.778"/>
-<hole x="17.78" y="7.62" drill="1.778"/>
-<hole x="17.78" y="-7.62" drill="1.778"/>
 <pad name="1" x="-20.32" y="-7.62" drill="0.8" diameter="1.778" shape="square"/>
 <pad name="2" x="-17.78" y="-7.62" drill="0.8" diameter="1.778" shape="octagon"/>
 <pad name="3" x="-15.24" y="-7.62" drill="0.8" diameter="1.778" shape="octagon"/>
@@ -412,7 +408,6 @@ Source: http://www.irf.com/product-info/datasheets/data/irfr5305pbf.pdf</descrip
 <pad name="GND" x="0" y="-2.54" drill="1.016" shape="long" rot="R90"/>
 <pad name="OUT" x="2.54" y="-2.54" drill="1.016" shape="long" rot="R90"/>
 <text x="-5.08" y="-6.0452" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-5.08" y="-7.62" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 <text x="-0.635" y="-3.81" size="1.27" layer="51" ratio="10">-</text>
 <text x="-3.175" y="-3.81" size="1.27" layer="51" ratio="10">I</text>
 <text x="1.905" y="-3.81" size="1.27" layer="51" ratio="10">O</text>
@@ -13573,6 +13568,13 @@ usare LM380</text>
 <pinref part="SERVO" gate="G$1" pin="P$3"/>
 <wire x1="-49.53" y1="-44.45" x2="-48.26" y2="-44.45" width="0.1524" layer="91"/>
 <label x="-48.26" y="-44.45" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="LED" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="A5"/>
+<wire x1="20.32" y1="-2.54" x2="21.59" y2="-2.54" width="0.1524" layer="91"/>
+<label x="21.59" y="-2.54" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>

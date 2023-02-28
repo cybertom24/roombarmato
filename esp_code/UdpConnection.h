@@ -5,23 +5,33 @@
   #include <ESP8266WiFi.h>
   #include <WiFiUdp.h>
   #include "Command.h"
-  #include "CustomBuffer.h"
   
   class UdpConnection {
     public:
-      UdpConnection(String mySsid, String myPassword, int myPort);      
+      UdpConnection(String mySsid, String myPassword, int myPort);   
+
+      // Inizializza la connessione
       void setup();
-      void checkPackets();
-      void refresh();
-      CustomBuffer getMessage();
-      void send(byte message[COMMAND_SIZE]);
-      bool debug = false, newMessage = false;
+
+      // Ritorna la lunghezza del pacchetto arrivato (se la lunghezza è -1 vuol dire che non c'è nessun pacchetto)
+      int checkPackets();
+
+      // Copia il messaggio che è arrivato nello spazio di memoria indicato dal puntatore passato come argomento
+      // ATTENZIONE: Il puntatore array deve già puntare a della memoria sufficientemente grande
+      // La funzione ritorna 0 se è andata a buon fine, -1 in caso ci siano stati errori
+      byte getPacket(byte *array);
+      int getPacketSize();
+
+      // void send(byte *message, int length);
+      bool debug = false;
+    
     private:
       String MYSSID, MYPASSWORD;
       int MYPORT;
       String senderIP;
       int senderPort;
       WiFiUDP _udp;
-      byte receivedBuffer[COMMAND_SIZE]; // Buffer per tenere i pacchetti ricevuti
+      byte *receivedPacket; // Buffer per tenere i pacchetti ricevuti
+      int receivedPacketSize;
   };
 #endif

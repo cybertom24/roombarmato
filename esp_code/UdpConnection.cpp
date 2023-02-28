@@ -17,7 +17,7 @@ void UdpConnection::setup() {
     Serial.println("\n");
     Serial.println("Booting up...");
   }
-  // Creazione dell'AP (togliendo il parametro PW l'AP diventa pubblico
+  // Creazione dell'AP (togliendo il parametro PW l'AP diventa pubblico)
   WiFi.softAP(MYSSID, MYPASSWORD);
   if (debug) {
     Serial.printf("AP created!\n\t> SSID: %s\n", MYSSID.c_str());
@@ -32,32 +32,35 @@ void UdpConnection::setup() {
   }
 }
 
-void UdpConnection::checkPackets() {
-  int packetSize = _udp.parsePacket();
-  if (packetSize > 0) {
-    newMessage = true;
+int UdpConnection::checkPackets() {
+  receivedPacketSize = _udp.parsePacket();
+  if (receivedPacketSize > 0) {
     // Salva l'indirizzo
     senderIP = _udp.remoteIP().toString();
     senderPort = _udp.remotePort();
     // Leggi il pacchetto e buttalo nel buffer
-    _udp.read(receivedBuffer, packetSize);
+    free(receivedPacket);
+    receivedPacket = (byte*) malloc(sizeof(byte) * receivedPacketSize);
+    _udp.read(receivedPacket, receivedPacketSize);
     
     if(debug) {
       Serial.printf("Received packet from %s:%d containing:\n", senderIP.c_str(), senderPort);
-      Serial.printf("\t%s\n", receivedBuffer);
+      Serial.printf("\t%s\n", receivedPacket);
     }
   }
 }
 
-void UdpConnection::refresh() {
-  newMessage = false;
+int UdpConnection::getPacketSize() {
+  return receivedPacketSize;
 }
 
-CustomBuffer UdpConnection::getMessage() {
-  return CustomBuffer(receivedBuffer);
+byte UdpConnection::getPacket(byte *array) {
+  memcpy(array, receivedPacket, receivedPacketSize);
+  return 0;
 }
 
-void UdpConnection::send(byte message[COMMAND_SIZE]) {
+/*
+void UdpConnection::send(byte *message, int length) {
   char _buffer[COMMAND_SIZE];
   for(int i = 0; i < COMMAND_SIZE; i++) {
     _buffer[i] = message[i];
@@ -66,3 +69,4 @@ void UdpConnection::send(byte message[COMMAND_SIZE]) {
   _udp.write(_buffer);
   _udp.endPacket();
 }
+*/
