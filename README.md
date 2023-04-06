@@ -4,10 +4,10 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 ### TODO
 #### PCB
 - (OK) Posiziona fori di montaggio
-- Trova valori per i condensatori del regolatore da 3.3V
-- Controlla che il package dei componenti corrisponda
+- (OK) Trova valori per i condensatori del regolatore da 3.3V
+- (OK) Controlla che il package dei componenti corrisponda
 - Completa file ordine
-- Modifica AK500
+- (OK) Modifica AK500
 - Controlla funzionamento amplificatore audio
 - (OK) Piano di massa in bottom e piano +12V in top
 
