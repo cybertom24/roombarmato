@@ -7159,7 +7159,7 @@ Each pin can provide or receive a maximum of 40 mA and has an internal pull-up r
 </device>
 </devices>
 </deviceset>
-<deviceset name="MCU80N03A">
+<deviceset name="MCU80N03A" prefix="T">
 <gates>
 <gate name="G$1" symbol="NMOS-FET-E" x="0" y="0"/>
 </gates>
