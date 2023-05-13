@@ -1,0 +1,13 @@
+Zn / S
+Rapporto consigliato: 3:1 per peso
+Rapporto stechiomerico [mol]: 1:1 -> 
+1 mol Zn = 65.38 g
+1 mol S = 32.07 g
+d Zn = 7.13 g/cm^3
+d S = 1.8 g/cm^3
+d Zn [mol/cm^3] = 0.1091
+d S [mol/cm^3] = 0.0561
+Rapporto stechiometrico [g]: 2:1
+Rapporto ottimale [g]: 3:1
+Rapporto ottimale [mol]: 3:2
+Rapporto ottimale [cm^3]: 3:4
