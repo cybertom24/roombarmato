@@ -1,6 +1,6 @@
 /* LIBRERIE */
-#include "UdpConnection.h"
-#include "Command.h"
+#include "../../libraries/arduino-lib/Command/src/Command.h"
+#include <UdpConnection.h>
 
 /* COSTANTI */
 #define PIN_LED 2

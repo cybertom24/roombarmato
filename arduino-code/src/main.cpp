@@ -1,5 +1,5 @@
-#include "Command.h"
-#include "MP3Serial.h"
+#include "../../libraries/arduino-lib/Command/src/Command.h"
+#include <MP3Serial.h>
 #include <SoftwareSerial.h>
 
 // Definizione dei pin utilizzati e delle loro funzioni

@@ -6,9 +6,9 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 - (OK) Posiziona fori di montaggio
 - (OK) Trova valori per i condensatori del regolatore da 3.3V
 - (OK) Controlla che il package dei componenti corrisponda
-- Completa file ordine
+- (OK) Completa file ordine
 - (OK) Modifica AK500
-- Controlla funzionamento amplificatore audio
+- (OK) Controlla funzionamento amplificatore audio
 - (OK) Piano di massa in bottom e piano +12V in top
 
 #### Arduino code
