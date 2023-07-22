@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Roomba_v1</string>
+
+    <string name="menu_orientation">Impostazioni rotazione</string>
+    <string name="menu_information">Informazioni</string>
+    <string name="menu_connected">Connesso</string>
+    <string name="menu_connectivity">Connessione...</string>
+    <string name="menu_download">Scarica</string>
+    <string name="menu_clear">Pulisci</string>
+    <string name="menu_reload">Aggiorna</string>
+    <string name="menu_songs">Canzoni...</string>
+
+    <string name="fileDirectory">Roombarmato-DEBUG</string>
+    <string name="firstMessage">CONNECTING></string>
+    <string name="connectivityDialogTitle">Impostazioni connettività</string>
+    <string name="orientationDialogTitle">Impostazioni rotazione</string>
+
+    <string name="shared_preferences_file">spFile_roombarmato</string>
+    <string name="spFile_receiverIP">receiverIP</string>
+    <string name="spFile_receiverPORT">receiverPORT</string>
+    <string name="spFile_myPORT">myPORT</string>
+    <string name="spFile_connected">_connected</string>
+    <string name="spFile_orientationLocked">orientationLocked</string>
+    <string name="spFile_defaultOrientation">defaultOrientation</string>
+    <string name="spFile_songs">songs</string>
+
+    <string name="json_title">title</string>
+    <string name="json_index">index</string>
+
+    <string name="receiverIP_default">192.168.4.1</string>
+    <string name="wifi_ssid">Roombarmato</string>
+
+    <string-array name="spinner_orientations">
+        <item>Verticale</item>
+        <item>Orizzontale</item>
+    </string-array>
+
+    <string-array name="spinner_default">
+        <item>NONE</item>
+        <item>SONG</item>
+    </string-array>
+</resources>

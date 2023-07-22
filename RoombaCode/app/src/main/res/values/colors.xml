@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#888888</color>
+    <color name="colorPrimaryDark">#4E4E4E</color>
+    <color name="colorAccent">#3FB52B</color>
+    <color name="knobColor">#4C4C4C</color>
+    <color name="externalColor">#939393</color>
+    <color name="textColor">#00FF00</color>
+    <color name="hintTextColor">#01A101</color>
+    <color name="textBackgroundColor">#000000</color>
+    <color name="mainBackgroundColor">#686868</color>
+</resources>

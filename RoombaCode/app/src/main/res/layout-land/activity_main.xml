@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/design_default_color_secondary_variant"
+    tools:context=".MainActivity"
+    tools:ignore="MissingDefaultResource">
+
+    <io.github.controlwear.virtual.joystick.android.JoystickView
+        android:id="@+id/joystickView"
+        android:layout_width="209dp"
+        android:layout_height="209dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginBottom="44dp"
+        app:JV_backgroundColor="#FF0000"
+        app:JV_borderColor="#00FF00"
+        app:JV_borderWidth="5dp"
+        app:JV_buttonColor="#0000FF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider_angle"
+        android:layout_width="127dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="420dp"
+        android:layout_marginBottom="44dp"
+        android:rotation="-90"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+        android:value="50"
+        android:valueFrom="30"
+        android:valueTo="70"
+        android:visibility="visible"
+        app:haloColor="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintStart_toEndOf="@+id/joystickView"
+        app:thumbColor="@color/textColor"
+        app:tickColor="@color/design_default_color_primary_variant"
+
+
+        app:labelBehavior="gone"
+
+
+        app:tickColorActive="#00888888"
+        app:tickColorInactive="@color/design_default_color_primary_dark"
+        app:trackColorActive="@color/hintTextColor"
+        app:trackColorInactive="@color/ic_launcher_background"
+        tools:visibility="visible" />
+
+    <com.example.roombarmato.Indicator
+        android:id="@+id/rockets_indicator"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        app:indicator_backgroundColor="@color/externalColor"
+        app:indicator_ledSize="70"
+        app:indicator_offColor="#FF0000"
+        app:indicator_onColor="#00FF00"
+        app:indicator_orientation="@integer/horizontal"
+        app:indicator_quantity="6"
+        app:indicator_strokeColor="@color/knobColor"
+        app:indicator_strokeSize="40"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/open_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="77dp"
+        android:text="Open"
+        app:layout_constraintBottom_toTopOf="@+id/slider_angle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/fire_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fire!"
+        app:layout_constraintBottom_toTopOf="@+id/open_button"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/emergency_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="452dp"
+        android:layout_marginTop="136dp"
+        android:backgroundTint="#E40D0D"
+        android:text="Emergency"
+        app:layout_constraintBottom_toTopOf="@+id/joystick"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rockets_indicator" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="40dp"
+        android:text="70°"
+        android:textColor="@color/knobColor"
+        android:textSize="@dimen/lever_textSize"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/slider_angle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="8dp"
+        android:text="30°"
+        android:textColor="@color/knobColor"
+        android:textSize="@dimen/lever_textSize"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="9dp"
+        android:text="menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rockets_indicator" />
+
+    <TextView
+        android:id="@+id/queue_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Lista vuota"
+        android:textColor="@color/textColor"
+        app:layout_constraintBottom_toTopOf="@+id/emergency_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rockets_indicator" />
+
+    <Button
+        android:id="@+id/btnSwitchSong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:text="Music"
+        app:layout_constraintStart_toEndOf="@+id/joystickView"
+        tools:layout_editor_absoluteY="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

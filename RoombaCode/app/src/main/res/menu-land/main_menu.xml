@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:ignore="MissingDefaultResource">
+    <item
+        android:id="@+id/menu_connected"
+        android:title="@string/menu_connected"
+        android:checkable="true"
+        />
+    <item
+        android:id="@+id/menu_connectivity"
+        android:title="@string/menu_connectivity"
+        />
+    <item
+        android:id="@+id/menu_reload"
+        android:title="@string/menu_reload"
+        android:visible="false" />
+    <item android:id="@+id/menu_songs"
+        android:title="@string/menu_songs"
+        />
+    <item
+        android:id="@+id/menu_orientation"
+        android:title="@string/menu_orientation"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_information"
+        android:title="@string/menu_information"
+        />
+</menu>
