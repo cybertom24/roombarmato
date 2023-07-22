@@ -9,8 +9,9 @@ TcpConnection::TcpConnection(String mySsid, String myPassword, int myPort) {
 }
 
 void TcpConnection::setup()
-{
-    Serial.begin(74880);
+{   
+    if(!Serial)
+        Serial.begin(74880);
     if (debug)
     {
         Serial.println("\n");

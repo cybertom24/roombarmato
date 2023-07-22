@@ -33,7 +33,7 @@ public:
 
     // Invia un messaggio all'ultimo dispositivo che ha comunicato
     void send(byte *message, int length);
-    bool debug = false;
+    bool debug = true;
 
 private:
     String MYSSID, MYPASSWORD;

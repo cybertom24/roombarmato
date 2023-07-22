@@ -1,68 +1,3 @@
-/**
- * @file main.cpp
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2023-07-22
- * 
- * @copyright Copyright (c) 2023
- * 
- * Note:
- *  - Servo:
- *      angolo di chiusura: 5
- *      angolo di apertura: 65
- */
-
-
-#include "../../libraries/arduino-lib/Command/src/Command.h"
-#include <MP3Serial.h>
-#include <SoftwareSerial.h>
-
-// Definizione dei pin utilizzati e delle loro funzioni
-// "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_ESP" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'ESP
-#define MY_RX_ESP 2
-#define MY_TX_ESP 3
-#define MY_RX_MP3 4
-#define MY_TX_MP3 5
-#define PIN_MOTORE_DX 10
-#define PIN_MOTORE_SX 9
-#define PIN_DX_DIR1 11
-#define PIN_DX_DIR2 12
-#define PIN_SX_DIR1 8
-#define PIN_SX_DIR2 7
-
-#define ESP_BAUD_RATE 74880
-#define SERIAL_BAUD_RATE 9600
-
-#define TIMEOUT_ESP_SERIAL 1000
-
-// Creazione dei due oggetti per il controllo delle due schede
-SoftwareSerial esp(MY_RX_ESP, MY_TX_ESP);
-MP3Serial mp3(MY_RX_MP3, MY_TX_MP3);
-
-unsigned long timeout = 0;
-boolean timeoutActive = false;
-
-void setup()
-{
-    pinMode(PIN_MOTORE_DX, OUTPUT);
-    pinMode(PIN_MOTORE_SX, OUTPUT);
-    pinMode(PIN_DX_DIR1, OUTPUT);
-    pinMode(PIN_DX_DIR2, OUTPUT);
-    pinMode(PIN_SX_DIR1, OUTPUT);
-    pinMode(PIN_SX_DIR2, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
-
-    // Inizializzazione delle 3 seriali, quella per il debug (Serial), quella per l'esp (esp) e quella per l'mp3 player (mp3)
-    esp.begin(ESP_BAUD_RATE);
-    Serial.begin(SERIAL_BAUD_RATE);
-    mp3.begin();
-
-    // Indica ad arduino che la seriale su cui bisogna concentrarsi ad ascoltare è quella per l'esp
-    // Quella per l'mp3 verrà ignorate in caso di dati in arrivo
-    // (non è un problema visto che non arriveranno mai dati)
-    esp.listen();
-}
 
 void loop()
 {
@@ -74,9 +9,9 @@ void loop()
         esp.readBytes(bufferIn, COMMAND_SIZE);
         // Probabilmente troppo lento e causa il blocco del sistema
         // ** DA TESTARE **
-        for (int i = 0; i < COMMAND_SIZE; i++) {
-            Serial.println(bufferIn[i], HEX);
-        }
+        //    for (int i = 0; i < Command::SIZE; i++) {
+        //      Serial.println(bufferIn[i], HEX);
+        //    }
         Command c(bufferIn);
         if (c.isRight)
         {

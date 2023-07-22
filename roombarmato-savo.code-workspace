@@ -1,0 +1,24 @@
+{
+	"folders": [
+        {
+            "path": "."
+        },
+        {
+            "name": "esp-code",
+            "path": "esp-code"
+        },
+        {
+            "name": "arduino-code",
+            "path": "arduino-code"
+        },
+        {
+            "name": "Servo-easy",
+            "path": "test/Servo-easy"
+        },
+        {
+            "name": "test-esp",
+            "path": "test/test-esp"
+        }
+    ],
+    "settings": {}
+}
