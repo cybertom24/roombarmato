@@ -22,11 +22,11 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 ### Help
 # Comandi git:
 Per impacchettare i file modificati
-- git add .
+  git add .
 Per assegnare il nome
-- git commit -m "nome alla modifica"
+  git commit -m "nome alla modifica"
 Per caricare su internet
-- git push
+  git push
 
 Per scaricare
-- git pull
+  git pull
