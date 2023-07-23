@@ -18,3 +18,11 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 
 #### App
 - Semplifica algoritmo di gestione potenza dei motori
+
+### Help
+# Comandi git:
+- Per impacchettare i file modificati: git add .
+- Per assegnare il nome: git commit -m "nome alla modifica"
+- Per caricare su internet: git push
+
+- Per scaricare: git pull
