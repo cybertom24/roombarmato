@@ -7,36 +7,27 @@
 #define SSID "Roombarmato"
 #define PASSWORD "e1m1-2077"
 #define PORT 4000
+#define SERIAL_BAUD_RATE 74880
 
 TcpConnection conn(SSID, PASSWORD, PORT);
 
 void setup()
 {
-    Serial.begin(74880);
-    Serial.println("Booting up...");
+    Serial.begin(SERIAL_BAUD_RATE);
+    while(!Serial)
+        ;   // Wait
 
     pinMode(PIN_LED, OUTPUT);
     // Durante il boot il led è acceso, si spegne a boot completato
     digitalWrite(PIN_LED, LOW);
 
     conn.setup();
-    Serial.println("Connection created");
+    
     digitalWrite(PIN_LED, HIGH);
 }
 
 void loop()
 {
-    if (Serial.available())
-    {
-        digitalWrite(PIN_LED, LOW);
-
-        byte message[COMMAND_SIZE];
-        Serial.readBytes(message, COMMAND_SIZE);
-        // conn.send(message);
-
-        digitalWrite(PIN_LED, HIGH);
-    }
-
     // Aspetta un nuovo client
     while (!conn.waitClient(0))
         ;
@@ -50,13 +41,23 @@ void loop()
             digitalWrite(PIN_LED, LOW);
 
             int size = conn.getPacketSize();
-            byte *command = (byte *)malloc(sizeof(byte) * size);
-            conn.getPacket(command);
+
+            byte packetBuffer[size];
+            conn.getPacket(packetBuffer);
             for (int i = 0; i < size; i++)
             {
-                Serial.print((char) command[i]);
+                Serial.print((char) packetBuffer[i]);
             }
             digitalWrite(PIN_LED, HIGH);
         }
+
+        if(Serial.available() > 0) {
+            int size = Serial.available();
+            byte message[size];
+            Serial.readBytes(message, size);
+            conn.send(message, size);
+        }
     }
+
+    Serial.println("Client disconnected");
 }

@@ -5,6 +5,9 @@
 #include <ESP8266WiFi.h>
 #include "Command.h"
 
+#define MAX_PACKET_SIZE 256
+#define SERIAL_BAUD_RATE 74880
+
 class TcpConnection
 {
 public:
@@ -31,8 +34,9 @@ public:
     // Ritorna la dimensione in byte dell'ultimo paccchetto arrivato e che è al momento contenuto nel buffer
     int getPacketSize();
 
-    // Invia un messaggio all'ultimo dispositivo che ha comunicato
-    void send(byte *message, int length);
+    // Invia un messaggio all'ultimo dispositivo che ha comunicato. Ritorna true se l'invio è andato a buon fine,
+    // altrimenti ritorna false
+    boolean send(byte *message, int length);
     bool debug = true;
 
 private:
@@ -42,7 +46,7 @@ private:
     WiFiClient client;
     String senderIP;
     int senderPort;
-    byte *receivedPacket; // Buffer per tenere i pacchetti ricevuti
+    byte bufferIn[MAX_PACKET_SIZE]; // Buffer per tenere i pacchetti ricevuti
     int receivedPacketSize;
 };
 #endif

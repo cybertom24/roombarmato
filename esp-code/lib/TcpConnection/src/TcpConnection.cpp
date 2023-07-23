@@ -2,16 +2,21 @@
 #include "Command.h"
 #include <ESP8266WiFi.h>
 
-TcpConnection::TcpConnection(String mySsid, String myPassword, int myPort) {
+TcpConnection::TcpConnection(String mySsid, String myPassword, int myPort)
+{
     MYSSID = mySsid;
     MYPASSWORD = myPassword;
     MYPORT = myPort;
 }
 
 void TcpConnection::setup()
-{   
-    if(!Serial)
-        Serial.begin(74880);
+{
+    if (!Serial)
+    {
+        Serial.begin(SERIAL_BAUD_RATE);
+        while (!Serial)
+            ; // Wait
+    }
     if (debug)
     {
         Serial.println("\n");
@@ -25,9 +30,9 @@ void TcpConnection::setup()
         Serial.printf("\t> PW: %s\n", MYPASSWORD.c_str());
     }
     // Creazione del server TCP
-    tcpServer = new WiFiServer((uint16_t) MYPORT);
+    tcpServer = new WiFiServer((uint16_t)MYPORT);
     tcpServer->begin();
-    
+
     if (debug)
     {
         Serial.printf("TCP socket open!\n");
@@ -36,41 +41,65 @@ void TcpConnection::setup()
     }
 }
 
-boolean TcpConnection::waitClient(unsigned long timeout) {
-    unsigned long startMicroseconds = micros();
-    
-    do {
-        client = tcpServer->available();
-    } while (!client && startMicroseconds + timeout < micros());
+boolean TcpConnection::waitClient(unsigned long timeout)
+{
+    // If timeout is 0 wait indefinetly
+    if (timeout == 0)
+    {
+        do
+        {
+            client = tcpServer->accept();
+        } while (!client);
+    }
+    else
+    {
+        // Else set a maximum waiting time
+        unsigned long startMicroseconds = micros();
+        do
+        {
+            client = tcpServer->accept();
+        } while (!client && startMicroseconds + timeout < micros());
+    }
 
-    if(client)
+    if (client)
         return true;
     else
         return false;
 }
 
-boolean TcpConnection::clientConnected() {
-    if(!client)
+boolean TcpConnection::clientConnected()
+{
+    if (!client)
         return false;
-    
-    return client.connected();
+
+    if(!client.connected()) 
+    {
+        client.stop();
+        return false;
+    }
+
+    return true;
 }
 
 int TcpConnection::checkPackets()
 {
-    if(!clientConnected())
+    if (!clientConnected())
         return -1;
-    
-    if(client.available() == 0)
-        return -1;
-    
-    receivedPacketSize = client.available();
-    free(receivedPacket);
-    receivedPacket = (byte *) malloc(receivedPacketSize * sizeof(byte));
-    client.read(receivedPacket, receivedPacketSize);
 
-    if (debug) {
-            Serial.printf("Received packet from %s:%d of lenght: %d\n", client.remoteIP().toString().c_str(), client.remotePort(), receivedPacketSize);
+    if (client.available() == 0)
+        return -1;
+
+    receivedPacketSize = client.available();
+
+    // Truncate the packet received
+    if (receivedPacketSize > MAX_PACKET_SIZE)
+        receivedPacketSize = MAX_PACKET_SIZE;
+
+    client.read(bufferIn, receivedPacketSize);
+
+    if (debug)
+    {
+        Serial.printf("Received packet from %s:%d of lenght: %d\n", client.remoteIP().toString().c_str(), client.remotePort(), receivedPacketSize);
     }
 
     return receivedPacketSize;
@@ -83,6 +112,15 @@ int TcpConnection::getPacketSize()
 
 byte TcpConnection::getPacket(byte *array)
 {
-    memcpy(array, receivedPacket, receivedPacketSize);
+    memcpy(array, bufferIn, receivedPacketSize);
     return 0;
+}
+
+boolean TcpConnection::send(byte *message, int length) 
+{
+    if(!clientConnected())
+        return false;
+
+    int byteWritten = client.write(message, length);
+    return byteWritten == length;
 }
