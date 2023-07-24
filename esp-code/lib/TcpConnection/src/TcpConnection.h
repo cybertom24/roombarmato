@@ -3,7 +3,6 @@
 // Librerie
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
-#include "Command.h"
 
 #define MAX_PACKET_SIZE 256
 #define SERIAL_BAUD_RATE 74880
@@ -37,7 +36,7 @@ public:
     // Invia un messaggio all'ultimo dispositivo che ha comunicato. Ritorna true se l'invio è andato a buon fine,
     // altrimenti ritorna false
     boolean send(byte *message, int length);
-    bool debug = true;
+    bool debug = false;
 
 private:
     String MYSSID, MYPASSWORD;

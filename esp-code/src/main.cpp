@@ -1,5 +1,4 @@
 /* LIBRERIE */
-#include "../../libraries/arduino-lib/Command/src/Command.h"
 #include <TcpConnection.h>
 
 /* COSTANTI */
@@ -9,46 +8,48 @@
 #define PORT 4000
 #define SERIAL_BAUD_RATE 74880
 
+/* FUNZIONI */
+void turnOffLed();
+void turnOnLed();
+
 TcpConnection conn(SSID, PASSWORD, PORT);
 
 void setup()
 {
     Serial.begin(SERIAL_BAUD_RATE);
     while(!Serial)
-        ;   // Wait
+        ;   // Aspetta che la seriale venga inizializzata
 
     pinMode(PIN_LED, OUTPUT);
     // Durante il boot il led è acceso, si spegne a boot completato
-    digitalWrite(PIN_LED, LOW);
+    turnOnLed();
 
     conn.setup();
     
-    digitalWrite(PIN_LED, HIGH);
+    turnOffLed();
 }
 
 void loop()
 {
-    // Aspetta un nuovo client
+    // Aspetta un nuovo client aspettando indefinitamente
     while (!conn.waitClient(0))
         ;
 
-    Serial.println("Client connected");
+    // Serial.println("Client connected");
+    // Segnala che un client si è connesso mantenendo acceso il led
+    turnOnLed();
 
     while (conn.clientConnected())
     {
         if (conn.checkPackets() > 0)
         {
-            digitalWrite(PIN_LED, LOW);
-
+            turnOffLed();
             int size = conn.getPacketSize();
 
             byte packetBuffer[size];
             conn.getPacket(packetBuffer);
-            for (int i = 0; i < size; i++)
-            {
-                Serial.print((char) packetBuffer[i]);
-            }
-            digitalWrite(PIN_LED, HIGH);
+            Serial.write(packetBuffer, size);
+            turnOnLed();
         }
 
         if(Serial.available() > 0) {
@@ -59,5 +60,16 @@ void loop()
         }
     }
 
-    Serial.println("Client disconnected");
+    // Serial.println("Client disconnected");
+    // Spegni il led
+    turnOffLed();
+}
+
+// Il led ha il controllo negato
+void turnOffLed() {
+    digitalWrite(PIN_LED, HIGH);
+}
+
+void turnOnLed() {
+    digitalWrite(PIN_LED, LOW);
 }

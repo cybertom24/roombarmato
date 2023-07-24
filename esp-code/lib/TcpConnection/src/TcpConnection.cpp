@@ -1,5 +1,4 @@
 #include "TcpConnection.h"
-#include "Command.h"
 #include <ESP8266WiFi.h>
 
 TcpConnection::TcpConnection(String mySsid, String myPassword, int myPort)
