@@ -20,6 +20,8 @@
 #include <Servo.h>
 
 /* COSTANTI */
+#define ON  HIGH
+#define OFF LOW
 // Definizione dei pin utilizzati e delle loro funzioni
 // "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_ESP" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'ESP
 #define MY_RX_ESP 2
@@ -42,6 +44,7 @@
 #define PIN_RAZZO_1 A1
 #define PIN_RAZZO_2 A2
 #define PIN_RAZZO_3 A3
+const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 // Altri pin
 #define PIN_FINECORSA A4
 #define PIN_LED_OCCHI A5
@@ -54,6 +57,8 @@
 #define MAX_VBAT 229
 #define CLOSED_LID_ANGLE 5
 #define OPENED_LID_ANGLE 65
+#define BATTERY_LOW_DELAY_ERROR 2000
+#define CANNA_ACCESA_DELAY 200
 
 /* FUNZIONI */
 void execute(Command command);
@@ -61,6 +66,12 @@ int checkBattery();
 void openLid();
 void closeLid();
 boolean isOpen();
+boolean batteryLow();
+void sendCommand(Command command);
+void move(byte potDx, byte potSx);
+void stopMotor();
+boolean shoot(byte which);
+void setEyes(boolean status);
 
 // Creazione dei due oggetti per il controllo delle due schede
 SoftwareSerial esp(MY_RX_ESP, MY_TX_ESP);
@@ -70,6 +81,8 @@ Servo servoDx;
 
 unsigned long timeout = 0;
 boolean timeoutActive = false;
+
+unsigned long batteryLowTimeout = 0;
 
 void setup()
 {
@@ -82,6 +95,10 @@ void setup()
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(PIN_CHK_VBAT, INPUT);
     pinMode(PIN_FINECORSA, INPUT);
+    for(int pin : PIN_RAZZI) {
+        pinMode(pin, OUTPUT);
+        digitalWrite(pin, LOW);
+    }
 
     // Inizializzazione delle 2 seriali, quella per l'esp (esp) e quella per l'mp3 (mp3)
     esp.begin(ESP_BAUD_RATE);
@@ -124,9 +141,25 @@ void loop_debug()
 
 void loop()
 {
+    // Controlla che il valore della batteria sia accettabile
+    if(batteryLow()) {
+        // La batteria è troppo bassa
+        // Invia ogni tot secondi il messaggio che la batteria è troppo bassa
+        if(batteryLowTimeout + BATTERY_LOW_DELAY_ERROR < millis())
+        {
+            sendCommand(Command::makeCommand(CODE_BATTERY_LOW));
+            batteryLowTimeout = millis();
+        }
+        // Interrompi qualsiasi tipo di azione e spegni gli occhi
+        stopMotor();
+        setEyes(OFF);
+        return;
+    }
+
+
     if (esp.available() >= COMMAND_SIZE)
     {
-        timeoutActive = false;
+        timeoutActive = OFF;
 
         byte bufferIn[COMMAND_SIZE];
         esp.readBytes(bufferIn, COMMAND_SIZE);
@@ -143,7 +176,7 @@ void loop()
         {
             // Fai partire il timeout se non è ancora partito
             timeout = millis();
-            timeoutActive = true;
+            timeoutActive = ON;
         }
         else if (millis() >= timeout + TIMEOUT_ESP_SERIAL)
         {
@@ -151,7 +184,7 @@ void loop()
             byte garbage[esp.available()];
             esp.readBytes(garbage, esp.available());
             // E blocca il timeout
-            timeoutActive = false;
+            timeoutActive = OFF;
         }
     }
 }
@@ -166,10 +199,10 @@ void execute(Command command)
     case CODE_PLAY:
         mp3.play();
         break;
-    //        case Command::PLAY_INDEX:
-    //          // !! DA RIMUOVERE !!
-    //          mp3.Play_index((int) c._data[0] + 1);
-    //          break;
+    case CODE_PLAY_INDEX:
+        // Da rimuovere? Non ricordo perchè. Investigare!
+        mp3.playIndex((int) data[0] + 1);
+        break;
     case CODE_PAUSE:
         mp3.pause();
         break;
@@ -183,23 +216,26 @@ void execute(Command command)
         mp3.volumeSet(data[0]);
         break;
     case CODE_MOVE:
-        /* In data[0] è contenuta la potenza da dare al motore DX
-           In data[1] quella per il motore SX
-           Il dato è strutturato in modo da contenere nel LSB la direzione (1 = avanti, 0 = indietro)
-           mentre nei successivi bit la potenza effettiva (che va quindi da 0 a 255 a passo di 2)
-        */
-        // Recupera la direzione in cui mandare i motori
-        bool dirX = data[0] & 0x01,
-             dirY = data[1] & 0x01;
-        // Imposta la direzione del motore DX
-        digitalWrite(PIN_DX_DIR1, dirX);
-        digitalWrite(PIN_DX_DIR2, !dirX);
-        // Imposta la direzione del motore SX
-        digitalWrite(PIN_SX_DIR1, dirY);
-        digitalWrite(PIN_SX_DIR2, !dirY);
-        // Imposta la potenza data ai motori (0xFE = 11111110B -> rende sempre zero il LSB)
-        analogWrite(PIN_MOTORE_DX, data[0] & 0xFE);
-        analogWrite(PIN_MOTORE_SX, data[1] & 0xFE);
+        // In data[0] è contenuta la potenza da dare al motore DX
+        // In data[1] quella per il motore SX
+        move(data[0], data[1]);
+        break;
+    case CODE_OPEN_LID:
+        openLid();
+        break;
+    case CODE_CLOSE_LID:
+        closeLid();
+        break;
+    case CODE_FIRE:
+        boolean result = shoot(data[0]);
+        // Se lo sparo non è andato a buon fine
+        if(!result)
+        {
+            sendCommand(Command::makeCommand(CODE_LAUNCH_FAILURE));
+        }
+        break;
+    case CODE_EYES:
+        setEyes(data[0]);
         break;
     }
 }
@@ -219,4 +255,50 @@ void closeLid() {
 
 boolean isOpen() {
     return digitalRead(PIN_FINECORSA);
+}
+
+boolean batteryLow() {
+    return analogRead(PIN_CHK_VBAT) <= MIN_VBAT;
+}
+
+void sendCommand(Command command) {
+    esp.write(command.buffer, COMMAND_SIZE);
+}
+
+void move(byte potDx, byte potSx) {
+    // Il dato è strutturato in modo da contenere nel LSB la direzione (1 = avanti, 0 = indietro)
+    // mentre nei successivi bit la potenza effettiva (che va quindi da 0 a 255 a passo di 2)
+    // Recupera la direzione in cui mandare i motori
+    bool dirDx = potDx & 0x01,
+         dirSx = potSx & 0x01;
+    // Imposta la direzione del motore DX
+    digitalWrite(PIN_DX_DIR1, dirDx);
+    digitalWrite(PIN_DX_DIR2, !dirDx);
+    // Imposta la direzione del motore SX
+    digitalWrite(PIN_SX_DIR1, dirSx);
+    digitalWrite(PIN_SX_DIR2, !dirSx);
+    // Imposta la potenza data ai motori (0xFE = 11111110B -> rende sempre zero il LSB)
+    analogWrite(PIN_MOTORE_DX, potDx & 0xFE);
+    analogWrite(PIN_MOTORE_SX, potSx & 0xFE);
+}
+
+void stopMotor() {
+    // Quando si fermano i motori, la direzione è preimpostata in avanti
+    move(1, 1);
+}
+
+// Spara con la canna selezionata dall'indice passato
+// Ritorna se lo sparo è andato a buon fine oppure no
+boolean shoot(byte which) {
+    // Se non è aperto non sparare
+    if(!isOpen())
+        return false;
+    
+    digitalWrite(PIN_RAZZI[which], HIGH);
+    delay(CANNA_ACCESA_DELAY);
+    digitalWrite(PIN_RAZZI[which], LOW);
+}
+
+void setEyes(boolean status) {
+    digitalWrite(PIN_LED_OCCHI, status);
 }
