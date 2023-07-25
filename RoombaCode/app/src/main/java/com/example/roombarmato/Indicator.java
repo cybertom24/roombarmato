@@ -3,6 +3,7 @@ package com.example.roombarmato;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,7 +14,10 @@ public class Indicator extends View {
     public int quantity;
     private float spacing, ledRadius, ledSize, strokeSize;
     private int backgroundColor, onColor, offColor, strokeColor;
-    private Paint backgroundPaint, onPaint, offPaint, strokePaint;
+    private Paint backgroundPaint;
+    private Paint onPaint;
+    Paint offPaint;
+    private Paint strokePaint;
     private boolean vertical;
     // Utility
     private boolean[] statusArray;
@@ -23,7 +27,7 @@ public class Indicator extends View {
 
         TypedArray values = context.getTheme().obtainStyledAttributes(attrs, R.styleable.Indicator, 0, 0);
         try {
-            onColor = values.getInteger(R.styleable.Indicator_indicator_onColor, 0xFFFFFFFF);
+            onColor = values.getInteger(R.styleable.Indicator_indicator_onColor, 0x00FF000);
             offColor = values.getInteger(R.styleable.Indicator_indicator_offColor, 0xFF000000);
             backgroundColor = values.getInteger(R.styleable.Indicator_indicator_backgroundColor, 0xFFBEBEBE);
             quantity = values.getInteger(R.styleable.Indicator_indicator_quantity, 3);
@@ -57,11 +61,11 @@ public class Indicator extends View {
         backgroundPaint.setAntiAlias(true);
         backgroundPaint.setStyle(Paint.Style.FILL);
 
-        onPaint.setColor(onColor);
+        onPaint.setColor(Color.GREEN);
         onPaint.setAntiAlias(true);
         onPaint.setStyle(Paint.Style.FILL);
 
-        offPaint.setColor(offColor);
+        offPaint.setColor(Color.BLUE);
         offPaint.setAntiAlias(true);
         offPaint.setStyle(Paint.Style.FILL);
 
@@ -70,6 +74,8 @@ public class Indicator extends View {
         strokePaint.setStyle(Paint.Style.STROKE);
         strokePaint.setStrokeWidth(ledRadius*(strokeSize/100));
         strokePaint.setStrokeCap(Paint.Cap.ROUND);
+
+
 
         if (vertical) {
 

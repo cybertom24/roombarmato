@@ -6,7 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
     TcpClient2 myTcpClient2= new TcpClient2("192.168.4.1",4000);
     // Objects
     Indicator rocketsIndicator;
+    Button rocketBtn1;
+    Button rocketBtn2;
+    Button rocketBtn3;
+    Button rocketBtn4;
+
+
     String msg="Buongiorno";
     JoystickView joystick;
     TextView terminalView;
@@ -97,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         resources = getResources();
+        Log.d("test","PODLWNPdvdfngkjernkg");
 
         spFile = getSharedPreferences(resources.getString(R.string.shared_preferences_file), MODE_PRIVATE);
         spFileEditor = spFile.edit();
@@ -117,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConnected() {
                 // When connected send the important messages
-                send(makeCommand(Commands.REQUEST_STATUS_ROCKETS));
+                myTcpClient2.send(makeCommand(Commands.REQUEST_STATUS_ROCKETS));
             }
 
             @Override
@@ -152,10 +159,37 @@ public class MainActivity extends AppCompatActivity {
                 joystick =(JoystickView) findViewById(R.id.joystickView);
                 emergencyButton = findViewById(R.id.emergency_button);
                 menuButton = findViewById(R.id.menu_button);
-                queueTextView = findViewById(R.id.queue_textView);
                 slider=findViewById(R.id.slider_angle);
+                rocketBtn1=findViewById(R.id.rocketButton4);
+                rocketBtn2=findViewById(R.id.rocketButton2);
+                rocketBtn3=findViewById(R.id.rocketButton1);
+                rocketBtn4=findViewById(R.id.rocketButton3);
 
 
+                rocketBtn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        rocketBtn1.setBackgroundResource(R.color.scarica);
+                    }
+                });
+            rocketBtn2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    rocketBtn2.setBackgroundResource(R.color.scarica);
+                }
+            });
+            rocketBtn3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    rocketBtn3.setBackgroundResource(R.color.scarica);
+                }
+            });
+            rocketBtn4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    rocketBtn4.setBackgroundResource(R.color.scarica);
+                }
+            });
 
 
                 menuButton.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             break;
 
-                                    /*case R.id.menu_reload:
+                                    /*) case R.id.menu_reload:
                                         send(makeCommand(Commands.REQUEST_STATUS_ROCKETS));
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -198,6 +232,16 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                         break;*/
+                                    case R.id.menu_reload:
+                                        rocketsIndicator.offPaint.setColor(Color.GREEN);
+                                        Toast.makeText(getApplicationContext(),"Ciaooo",Toast.LENGTH_LONG).show();
+                                        rocketBtn1.setBackgroundResource(R.color.textColor);
+                                        rocketBtn2.setBackgroundResource(R.color.textColor);
+                                        rocketBtn3.setBackgroundResource(R.color.textColor);
+                                        rocketBtn4.setBackgroundResource(R.color.textColor);
+
+
+                                        break;
                                     /*case R.id.menu_orientation:
                                         new OrientationDialog().show(getSupportFragmentManager(), OrientationDialog.TAG);
                                         break;*/
@@ -240,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 emergencyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        send(makeCommand(Commands.MOVE, 1, 1), true);
+                        myTcpClient2.send(makeCommand(Commands.MOVE, 1, 1));
                     }
                 });
 
@@ -323,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public  void send(byte[] message, boolean important) {
+    /*public  void send(byte[] message, boolean important) {
         if (connected) {
             if(important) {
                 sendBuffer.clear();
@@ -339,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
     private  void send(byte[] message) {
         send(message, false);
     }
-
+*/
     private void startUdp() {
         /*// Ottieni il manager delle connessioni wifi
         WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -514,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
                 playing = !playing;
                 if (playing) {
                     int selection = songsSpinner.getSelectedItemPosition();
-                    send(makeCommand(Commands.SET_VOLUME, volume));
+                    myTcpClient2.send(makeCommand(Commands.SET_VOLUME, volume));
                     if (selection == 0) myTcpClient2.send(makeCommand(Commands.PLAY));
                     else myTcpClient2.send(makeCommand(Commands.PLAY_INDEX, selection - 1));
 
@@ -531,11 +575,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 muted = !muted;
                 if (muted) {
-                    send(makeCommand(Commands.SET_VOLUME, 0));
+                    myTcpClient2.send(makeCommand(Commands.SET_VOLUME, 0));
                     muteButton.setText("UNMUTE");
                     myTcpClient2.send("TASTO PREMUTO".getBytes());
                 } else {
-                    send(makeCommand(Commands.SET_VOLUME, volume));
+                    myTcpClient2.send(makeCommand(Commands.SET_VOLUME, volume));
                     muteButton.setText("MUTE");
                 }
             }
@@ -600,11 +644,123 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void joystick(int angle, int strenght){
-        int val_x= (int)(Math.cos((double)angle)*100);
-        int val_y= (int)(Math.sin((double)angle)*100);
+        float val_x= (float)(Math.cos((double)angle)*100);
+        float val_y= (float)(Math.sin((double)angle)*100);
+        float val_tot = (float)(Math.sqrt(Math.pow(val_x,2)+Math.pow(val_y,2)));
 
-        send(Commands.makeCommand(Commands.MOVE,val_x,val_y));
+        float potenzaDx= calcolaPotenze(val_x,val_y,val_tot)[0];
+        float potenzaSx = calcolaPotenze(val_x,val_y,val_tot)[1];
+
+        myTcpClient2.send(costruisciComando(potenzaDx,potenzaSx));
+        Log.d("Joystick","PotenzaDx: "+String.valueOf(potenzaDx)+" PotenzaSx: "+String.valueOf(potenzaSx));
+
+
     }
+
+
+    /*
+     * Spiegazione funzioni utilizzate:
+     *
+     * joystick:
+     * .percentualeX() restituisce la posizione x della manopola come float che va da -100 a 100 dove 0 è al centro
+     * .percentualeY() come per la x ma con la coordinata y della manopola
+     * .percentualeTot() resitiuisce la distanza dal centro della manopola in percentuale (pitagora sulle coordinate x e y e poi divido per il raggio massimo). Il valore va da 0 a 100
+     *
+     */
+
+
+
+
+    public float[] calcolaPotenze(float percentualeX, float percentualeY, float percentualeTot) {
+        float potenzaDx = 0;
+        float potenzaSx = 0;
+
+        // Se la manopola è puntata verso l'avanti
+        if (percentualeY >= 0) {
+            if (percentualeX < 0)
+                potenzaDx = 1;
+            else {
+                // percentualeX va da 0 a 1 (dividendolo per 100) e lo devo fare andare da 1 a -1
+                potenzaDx = percentualeX / 100f;
+                potenzaDx *= -2;     // Inverto il senso e aumento il range
+                potenzaDx += 1;      // Sommo l'offset
+            }
+            if (percentualeX > 0)
+                potenzaSx = 1;
+            else {
+                potenzaSx = percentualeX / 100f;
+                potenzaSx *= 2;      // Aumento il range
+                potenzaSx += 1;      // Sommo l'offset
+            }
+        }
+        // Nel caso in cui la manopola fosse sotto lo zero (puntata verso il dietro) gestisco i due motori in modo inverso
+        else {
+            // Invertendo la potenza (e quindi la direzione)
+            percentualeTot *= -1;
+            if (percentualeX < 0)
+                potenzaSx = 1;
+            else {
+                potenzaSx = percentualeX / 100f;
+                potenzaSx *= -2;
+                potenzaSx += 1;
+            }
+            if (percentualeX > 0)
+                potenzaDx = 1;
+            else {
+                potenzaDx = percentualeX / 100f;
+                potenzaDx *= 2;
+                potenzaDx += 1;
+            }
+        }
+        // potenzaDx e potenzaSx vanno da -1 a 1 e li faccio andare da -100 a 100 in base a quanto dista
+        // la manopola dal centro del joystick
+        potenzaDx *= percentualeTot;
+        potenzaSx *= percentualeTot;
+
+        return new float[] {potenzaDx, potenzaSx};
+    }
+
+    public byte[] costruisciComando(float potenzaDx, float potenzaSx) {
+        // Conversione dei dati
+        /* In data[0] è contenuta la potenza da dare al motore DX
+         * In data[1] quella per il motore SX
+         * Il dato è strutturato in modo da contenere nel LSB la direzione (1 = avanti, 0 = indietro)
+         * mentre nei successivi bit la potenza effettiva (che va quindi da 0 a 255 a passo di 2)
+         */
+
+        // Recupero la direzione (vero = avanti, falso = indietro)
+        boolean direzioneDx = potenzaDx >= 0;
+        boolean direzioneSx = potenzaSx >= 0;
+        // Espando il range da [0,100] (togliendo il segno) a [0,255]
+        potenzaDx = (float) Math.abs(potenzaDx) * 2.55f;
+        if (potenzaDx > 255)
+            potenzaDx = 255;
+
+        potenzaSx = (float) Math.abs(potenzaSx) * 2.55f;
+        if (potenzaSx > 255)
+            potenzaSx = 255;
+        // Converto il dato in byte che devo inviare
+        byte datoDx = (byte) potenzaDx;
+        byte datoSx = (byte) potenzaSx;
+        // Sovrascrivo la direzione sul LSB del dato da inviare
+        if (direzioneDx)
+            datoDx = (byte) (datoDx | 0x01);
+        else
+            datoDx = (byte) (datoDx & 0xFE);
+
+        if (direzioneSx)
+            datoSx = (byte) (datoSx | 0x01);
+        else
+            datoSx = (byte) (datoSx & 0xFE);
+
+        return makeCommand(Commands.MOVE, datoDx, datoSx);
+    }
+
+// IMPORTANTE: ricordarsi della questione dei messaggi importanti!!!
+// Serve se abbiamo il problema dell'accumulo di messaggi
+// Vedere prima se si riesce a risolvere
+// Se i motori si devono fermare (pot = 00000001, in caso di "0" la direzione è preimpostata in avanti)
+// segna il messaggio come importante (qualsiasi altro messaggio in lista viene eliminato e viene inviato solo questo)
 }
 
 

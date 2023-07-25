@@ -35,27 +35,28 @@
         android:value="50"
         android:valueFrom="30"
         android:valueTo="70"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:haloColor="@color/colorAccent"
+        app:labelBehavior="gone"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintStart_toEndOf="@+id/joystickView"
         app:thumbColor="@color/textColor"
+
+
         app:tickColor="@color/design_default_color_primary_variant"
-
-
-        app:labelBehavior="gone"
 
 
         app:tickColorActive="#00888888"
         app:tickColorInactive="@color/design_default_color_primary_dark"
         app:trackColorActive="@color/hintTextColor"
         app:trackColorInactive="@color/ic_launcher_background"
-        tools:visibility="visible" />
+        tools:visibility="invisible" />
 
     <com.example.roombarmato.Indicator
         android:id="@+id/rockets_indicator"
         android:layout_width="200dp"
         android:layout_height="50dp"
+        android:visibility="invisible"
         app:indicator_backgroundColor="@color/externalColor"
         app:indicator_ledSize="70"
         app:indicator_offColor="#FF0000"
@@ -65,7 +66,8 @@
         app:indicator_strokeColor="@color/knobColor"
         app:indicator_strokeSize="40"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <Button
         android:id="@+id/open_button"
@@ -137,21 +139,11 @@
         android:id="@+id/menu_button"
         android:layout_width="80dp"
         android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginBottom="18dp"
         android:text="menu"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rockets_indicator" />
-
-    <TextView
-        android:id="@+id/queue_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="Lista vuota"
-        android:textColor="@color/textColor"
-        app:layout_constraintBottom_toTopOf="@+id/emergency_button"
+        app:layout_constraintBottom_toTopOf="@+id/joystickView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rockets_indicator" />
 
@@ -160,9 +152,51 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="112dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="329dp"
         android:text="Music"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/joystickView"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/rocketButton4"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="164dp"
+        android:background="#25FA00"
+        app:layout_constraintEnd_toStartOf="@+id/btnSwitchSong"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/rocketButton3"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="17dp"
+        android:background="#25FA00"
+        app:layout_constraintStart_toEndOf="@+id/rocketButton2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/rocketButton2"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="16dp"
+        android:background="#25FA00"
+        app:layout_constraintStart_toEndOf="@+id/rocketButton1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/rocketButton1"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/textColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

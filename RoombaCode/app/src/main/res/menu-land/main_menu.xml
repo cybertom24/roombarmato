@@ -14,8 +14,7 @@
         />
     <item
         android:id="@+id/menu_reload"
-        android:title="@string/menu_reload"
-        android:visible="false" />
+        android:title="Ricarica" />
     <item android:id="@+id/menu_songs"
         android:title="@string/menu_songs"
         />

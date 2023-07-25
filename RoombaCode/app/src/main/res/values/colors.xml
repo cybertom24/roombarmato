@@ -8,5 +8,7 @@
     <color name="textColor">#00FF00</color>
     <color name="hintTextColor">#01A101</color>
     <color name="textBackgroundColor">#000000</color>
+    <color name="scarica">#FF0000</color>
+
     <color name="mainBackgroundColor">#686868</color>
 </resources>
