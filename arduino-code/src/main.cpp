@@ -20,7 +20,7 @@
 #include <Servo.h>
 
 /* COSTANTI */
-#define ON  HIGH
+#define ON HIGH
 #define OFF LOW
 // Definizione dei pin utilizzati e delle loro funzioni
 // "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_ESP" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'ESP
@@ -95,7 +95,8 @@ void setup()
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(PIN_CHK_VBAT, INPUT);
     pinMode(PIN_FINECORSA, INPUT);
-    for(int pin : PIN_RAZZI) {
+    for (int pin : PIN_RAZZI)
+    {
         pinMode(pin, OUTPUT);
         digitalWrite(pin, LOW);
     }
@@ -142,10 +143,11 @@ void loop_debug()
 void loop()
 {
     // Controlla che il valore della batteria sia accettabile
-    if(batteryLow()) {
+    if (batteryLow())
+    {
         // La batteria è troppo bassa
         // Invia ogni tot secondi il messaggio che la batteria è troppo bassa
-        if(batteryLowTimeout + BATTERY_LOW_DELAY_ERROR < millis())
+        if (batteryLowTimeout + BATTERY_LOW_DELAY_ERROR < millis())
         {
             sendCommand(Command::makeCommand(CODE_BATTERY_LOW));
             batteryLowTimeout = millis();
@@ -155,7 +157,6 @@ void loop()
         setEyes(OFF);
         return;
     }
-
 
     if (esp.available() >= COMMAND_SIZE)
     {
@@ -201,7 +202,7 @@ void execute(Command command)
         break;
     case CODE_PLAY_INDEX:
         // Da rimuovere? Non ricordo perchè. Investigare!
-        mp3.playIndex((int) data[0] + 1);
+        mp3.playIndex((int)data[0] + 1);
         break;
     case CODE_PAUSE:
         mp3.pause();
@@ -229,7 +230,7 @@ void execute(Command command)
     case CODE_FIRE:
         boolean result = shoot(data[0]);
         // Se lo sparo non è andato a buon fine
-        if(!result)
+        if (!result)
         {
             sendCommand(Command::makeCommand(CODE_LAUNCH_FAILURE));
         }
@@ -241,31 +242,38 @@ void execute(Command command)
 }
 
 // Ritorna la percentuale di carica della batteria in un numero da 0 a 100
-int checkBattery() {
+int checkBattery()
+{
     return map(analogRead(PIN_CHK_VBAT), MIN_VBAT, MAX_VBAT, 0, 100);
 }
 
-void openLid() {
+void openLid()
+{
     servoDx.write(OPENED_LID_ANGLE);
 }
 
-void closeLid() {
+void closeLid()
+{
     servoDx.write(CLOSED_LID_ANGLE);
 }
 
-boolean isOpen() {
+boolean isOpen()
+{
     return digitalRead(PIN_FINECORSA);
 }
 
-boolean batteryLow() {
+boolean batteryLow()
+{
     return analogRead(PIN_CHK_VBAT) <= MIN_VBAT;
 }
 
-void sendCommand(Command command) {
+void sendCommand(Command command)
+{
     esp.write(command.buffer, COMMAND_SIZE);
 }
 
-void move(byte potDx, byte potSx) {
+void move(byte potDx, byte potSx)
+{
     // Il dato è strutturato in modo da contenere nel LSB la direzione (1 = avanti, 0 = indietro)
     // mentre nei successivi bit la potenza effettiva (che va quindi da 0 a 255 a passo di 2)
     // Recupera la direzione in cui mandare i motori
@@ -282,23 +290,27 @@ void move(byte potDx, byte potSx) {
     analogWrite(PIN_MOTORE_SX, potSx & 0xFE);
 }
 
-void stopMotor() {
+void stopMotor()
+{
     // Quando si fermano i motori, la direzione è preimpostata in avanti
     move(1, 1);
 }
 
 // Spara con la canna selezionata dall'indice passato
 // Ritorna se lo sparo è andato a buon fine oppure no
-boolean shoot(byte which) {
+boolean shoot(byte which)
+{
     // Se non è aperto non sparare
-    if(!isOpen())
+    if (!isOpen())
         return false;
-    
+
     digitalWrite(PIN_RAZZI[which], HIGH);
     delay(CANNA_ACCESA_DELAY);
     digitalWrite(PIN_RAZZI[which], LOW);
+    return true;
 }
 
-void setEyes(boolean status) {
+void setEyes(boolean status)
+{
     digitalWrite(PIN_LED_OCCHI, status);
 }
