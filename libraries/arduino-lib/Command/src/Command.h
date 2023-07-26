@@ -18,7 +18,7 @@
 #define CODE_PAUSE            0x02
 #define CODE_VOLUME_UP        0x03
 #define CODE_VOLUME_DOWN      0x04
-#define CODE_UN_MUTE          0x05
+#define CODE_TOGGLE_MUTE      0x05
 #define CODE_SET_VOLUME       0x06
 #define CODE_NEXT_SONG        0x12
 #define CODE_PREVIOUS_SONG    0x13

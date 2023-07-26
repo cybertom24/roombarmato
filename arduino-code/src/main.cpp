@@ -30,15 +30,14 @@
 // #define MY_RX_MP3 4
 // #define MY_TX_MP3 5
 // Motori
-#define PIN_MOTORE_DX 10
-#define PIN_MOTORE_SX 9
-#define PIN_DX_DIR1 11
+#define PIN_MOTORE_DX 11
+#define PIN_MOTORE_SX 5
+#define PIN_DX_DIR1 10
 #define PIN_DX_DIR2 12
 #define PIN_SX_DIR1 8
 #define PIN_SX_DIR2 7
 // Servo
 #define PIN_SERVO_DX 6
-#define PIN_SERVO_SX 5
 // Razzi
 #define PIN_RAZZO_0 A0
 #define PIN_RAZZO_1 A1
@@ -68,10 +67,10 @@ void closeLid();
 boolean isOpen();
 boolean batteryLow();
 void sendCommand(Command command);
-void move(byte potDx, byte potSx);
-void stopMotor();
-boolean shoot(byte which);
+boolean shoot(uint8_t which);
 void setEyes(boolean status);
+void move(uint8_t potDx, uint8_t potSx);
+void stopMotor();
 
 // Creazione dei due oggetti per il controllo delle due schede
 SoftwareSerial esp(MY_RX_ESP, MY_TX_ESP);
@@ -111,6 +110,8 @@ void setup()
     esp.listen();
 
     servoDx.attach(PIN_SERVO_DX);
+    closeLid();
+    stopMotor();
 }
 
 void loop_debug()
@@ -118,7 +119,7 @@ void loop_debug()
     if (esp.available() > 0)
     {
         int size = esp.available();
-        byte bufferIn[size];
+        uint8_t bufferIn[size];
         esp.readBytes(bufferIn, size);
 
         Serial.print("> ");
@@ -133,7 +134,7 @@ void loop_debug()
     if (Serial.available() > 0)
     {
         int size = Serial.available();
-        byte bufferOut[size];
+        uint8_t bufferOut[size];
         Serial.readBytes(bufferOut, size);
 
         esp.write(bufferOut, size);
@@ -162,7 +163,7 @@ void loop()
     {
         timeoutActive = OFF;
 
-        byte bufferIn[COMMAND_SIZE];
+        uint8_t bufferIn[COMMAND_SIZE];
         esp.readBytes(bufferIn, COMMAND_SIZE);
         Command c(bufferIn);
         if (c.isRight())
@@ -182,7 +183,7 @@ void loop()
         else if (millis() >= timeout + TIMEOUT_ESP_SERIAL)
         {
             // Se è scaduto il timeout ripulisci la seriale
-            byte garbage[esp.available()];
+            uint8_t garbage[esp.available()];
             esp.readBytes(garbage, esp.available());
             // E blocca il timeout
             timeoutActive = OFF;
@@ -192,7 +193,7 @@ void loop()
 
 void execute(Command command)
 {
-    byte data[command.size()];
+    uint8_t data[command.size()];
     command.data(data);
 
     switch (command.code())
@@ -264,7 +265,8 @@ boolean isOpen()
 
 boolean batteryLow()
 {
-    return analogRead(PIN_CHK_VBAT) <= MIN_VBAT;
+    // return analogRead(PIN_CHK_VBAT) <= MIN_VBAT;
+    return false;
 }
 
 void sendCommand(Command command)
@@ -272,13 +274,13 @@ void sendCommand(Command command)
     esp.write(command.buffer, COMMAND_SIZE);
 }
 
-void move(byte potDx, byte potSx)
+void move(uint8_t potDx, uint8_t potSx)
 {
     // Il dato è strutturato in modo da contenere nel LSB la direzione (1 = avanti, 0 = indietro)
     // mentre nei successivi bit la potenza effettiva (che va quindi da 0 a 255 a passo di 2)
     // Recupera la direzione in cui mandare i motori
-    bool dirDx = potDx & 0x01,
-         dirSx = potSx & 0x01;
+    boolean dirDx = potDx & 0x01,
+            dirSx = potSx & 0x01;
     // Imposta la direzione del motore DX
     digitalWrite(PIN_DX_DIR1, dirDx);
     digitalWrite(PIN_DX_DIR2, !dirDx);
@@ -298,7 +300,7 @@ void stopMotor()
 
 // Spara con la canna selezionata dall'indice passato
 // Ritorna se lo sparo è andato a buon fine oppure no
-boolean shoot(byte which)
+boolean shoot(uint8_t which)
 {
     // Se non è aperto non sparare
     if (!isOpen())

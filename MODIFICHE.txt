@@ -1,0 +1,5 @@
+la libreria servo non permette il funzionamento del PWM nei pin 9 e 10 dove erano attaccati gli EN per i motori Dx e Sx.
+
+sono stati spostati:
+RP è stato scambiato con RD1 (RP al 11 e RD1 al 10)
+LP è stato messo al 5 (al posto di SERVOL che non serve);
