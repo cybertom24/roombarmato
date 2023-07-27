@@ -15,9 +15,15 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 - Risolvi problema del blocco per colpa dei messaggi
 - Aggiungi stop automatico dopo 2 secondi di assenza di messaggi
 - Aggiungi controllo tensione della batteria e blocco di tutto quando si scende sotto i ~10.5V
+- Completa comandi
+- Aggiungi sistema di sincronizzazione ESP-arduino
+
+### ESP code
+- Aggiungi sistema di sincronizzazione
+- Aggiungi sistema di mantenimento di messaggi in modo da inviarne uno per volta
 
 #### App
-- Semplifica algoritmo di gestione potenza dei motori
+(OK) Semplifica algoritmo di gestione potenza dei motori
 
 ### Help
 # Comandi git:
