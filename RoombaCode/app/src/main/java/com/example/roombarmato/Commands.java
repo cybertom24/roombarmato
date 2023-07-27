@@ -4,6 +4,8 @@ public class Commands {
     static final byte START_BYTE = 0x69;
     static final byte END_BYTE = (byte) 0xFA;
     static final byte SIZE = 0x06;
+    static final byte OPEN = 0x0A;
+    static final byte CLOSE = 0x0B;
     // MP3
     static final byte PLAY = 0x00;
     static final byte PLAY_INDEX = 0x01;

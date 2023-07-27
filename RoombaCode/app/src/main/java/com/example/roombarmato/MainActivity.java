@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,26 +47,30 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class MainActivity extends AppCompatActivity {
-//CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
-    TcpClient2 myTcpClient2= new TcpClient2("192.168.4.1",4000);
+    //CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
+    TcpClient2 myTcpClient2 = new TcpClient2("192.168.4.1", 4000);
     // Objects
     Indicator rocketsIndicator;
+    Button openButton;
     Button rocketBtn1;
     Button rocketBtn2;
     Button rocketBtn3;
     Button rocketBtn4;
+    boolean isOpen = false;
 
 
-    String msg="Buongiorno";
+    String msg = "Buongiorno";
     JoystickView joystick;
     TextView terminalView;
     String terminalText = "";
     EditText terminalEdit;
-    Button playButton, muteButton, nextButton, previousButton, switchMainBtn,addButton;
+    Button playButton, muteButton, nextButton, previousButton, switchMainBtn, addButton;
 
     Slider slider;
     Spinner songsSpinner;
@@ -95,15 +100,13 @@ public class MainActivity extends AppCompatActivity {
     boolean[] status;
 
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         resources = getResources();
-        Log.d("test","PODLWNPdvdfngkjernkg");
+        Log.d("test", "PODLWNPdvdfngkjernkg");
 
         spFile = getSharedPreferences(resources.getString(R.string.shared_preferences_file), MODE_PRIVATE);
         spFileEditor = spFile.edit();
@@ -154,74 +157,88 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     void basicConfiguration() {
-                rocketsIndicator = findViewById(R.id.rockets_indicator);
-                switchSongBtn = findViewById(R.id.btnSwitchSong);
-                joystick =(JoystickView) findViewById(R.id.joystickView);
-                emergencyButton = findViewById(R.id.emergency_button);
-                menuButton = findViewById(R.id.menu_button);
-                slider=findViewById(R.id.slider_angle);
-                rocketBtn1=findViewById(R.id.rocketButton4);
-                rocketBtn2=findViewById(R.id.rocketButton2);
-                rocketBtn3=findViewById(R.id.rocketButton1);
-                rocketBtn4=findViewById(R.id.rocketButton3);
+        rocketsIndicator = findViewById(R.id.rockets_indicator);
+        switchSongBtn = findViewById(R.id.btnSwitchSong);
+        joystick = (JoystickView) findViewById(R.id.joystickView);
+        emergencyButton = findViewById(R.id.emergency_button);
+        menuButton = findViewById(R.id.menu_button);
+        slider = findViewById(R.id.slider_angle);
+        rocketBtn1 = findViewById(R.id.rocketButton4);
+        rocketBtn2 = findViewById(R.id.rocketButton2);
+        rocketBtn3 = findViewById(R.id.rocketButton1);
+        rocketBtn4 = findViewById(R.id.rocketButton3);
+        openButton = findViewById(R.id.open_button);
+
+        openButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isOpen) {
+                    myTcpClient2.send(makeCommand(Commands.OPEN));
+                    isOpen = true;
+                } else {
+                    myTcpClient2.send(makeCommand(Commands.CLOSE));
+                    isOpen = false;
+                }
+            }
+        });
 
 
-                rocketBtn1.setOnClickListener(new View.OnClickListener() {
+        rocketBtn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rocketBtn1.setBackgroundResource(R.color.scarica);
+            }
+        });
+        rocketBtn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rocketBtn2.setBackgroundResource(R.color.scarica);
+            }
+        });
+        rocketBtn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rocketBtn3.setBackgroundResource(R.color.scarica);
+            }
+        });
+        rocketBtn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rocketBtn4.setBackgroundResource(R.color.scarica);
+            }
+        });
+
+
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create the popup menu
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
+                MenuInflater inflater = popupMenu.getMenuInflater();
+                inflater.inflate(R.menu.main_menu, popupMenu.getMenu());
+
+                popupMenu.getMenu().findItem(R.id.menu_connected).setChecked(connected);
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
-                    public void onClick(View view) {
-                        rocketBtn1.setBackgroundResource(R.color.scarica);
-                    }
-                });
-            rocketBtn2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    rocketBtn2.setBackgroundResource(R.color.scarica);
-                }
-            });
-            rocketBtn3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    rocketBtn3.setBackgroundResource(R.color.scarica);
-                }
-            });
-            rocketBtn4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    rocketBtn4.setBackgroundResource(R.color.scarica);
-                }
-            });
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+
+                            case R.id.menu_connected://Connesso []
+                                if (connected) {
+                                    connected = false;
+                                    spFileEditor.putBoolean(resources.getString(R.string.spFile_connected), connected);
+                                    spFileEditor.apply();
+                                } else startUdp();
+                                break;
+                            case R.id.menu_connectivity://Connessione
+                                //new ConnectivityDialog().show(getSupportFragmentManager(), ConnectivityDialog.TAG);
 
 
-                menuButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Create the popup menu
-                        PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
-                        MenuInflater inflater = popupMenu.getMenuInflater();
-                        inflater.inflate(R.menu.main_menu, popupMenu.getMenu());
+                                myTcpClient2.connect();
+                                myTcpClient2.send("RIPROVA COL 2".getBytes());
 
-                        popupMenu.getMenu().findItem(R.id.menu_connected).setChecked(connected);
-
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-
-                                    case R.id.menu_connected://Connesso []
-                                        if (connected) {
-                                            connected = false;
-                                            spFileEditor.putBoolean(resources.getString(R.string.spFile_connected), connected);
-                                            spFileEditor.apply();
-                                        } else startUdp();
-                                        break;
-                                    case R.id.menu_connectivity://Connessione
-                                        //new ConnectivityDialog().show(getSupportFragmentManager(), ConnectivityDialog.TAG);
-
-
-                                         myTcpClient2.connect();
-                                         myTcpClient2.send("RIPROVA COL 2".getBytes());
-
-                                            break;
+                                break;
 
                                     /*) case R.id.menu_reload:
                                         send(makeCommand(Commands.REQUEST_STATUS_ROCKETS));
@@ -232,25 +249,25 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                         break;*/
-                                    case R.id.menu_reload:
-                                        rocketsIndicator.offPaint.setColor(Color.GREEN);
-                                        Toast.makeText(getApplicationContext(),"Ciaooo",Toast.LENGTH_LONG).show();
-                                        rocketBtn1.setBackgroundResource(R.color.textColor);
-                                        rocketBtn2.setBackgroundResource(R.color.textColor);
-                                        rocketBtn3.setBackgroundResource(R.color.textColor);
-                                        rocketBtn4.setBackgroundResource(R.color.textColor);
+                            case R.id.menu_reload:
+                                rocketsIndicator.offPaint.setColor(Color.GREEN);
+                                Toast.makeText(getApplicationContext(), "Ciaooo", Toast.LENGTH_LONG).show();
+                                rocketBtn1.setBackgroundResource(R.color.textColor);
+                                rocketBtn2.setBackgroundResource(R.color.textColor);
+                                rocketBtn3.setBackgroundResource(R.color.textColor);
+                                rocketBtn4.setBackgroundResource(R.color.textColor);
 
 
-                                        break;
+                                break;
                                     /*case R.id.menu_orientation:
                                         new OrientationDialog().show(getSupportFragmentManager(), OrientationDialog.TAG);
                                         break;*/
                                     /*case R.id.menu_clear:
                                         clearTerminal();
                                         break;*/
-                                    case R.id.menu_information://informazioni
-                                        Toast.makeText(MainActivity.this, "PROVA", Toast.LENGTH_SHORT).show();
-                                        break;
+                            case R.id.menu_information://informazioni
+                                Toast.makeText(MainActivity.this, "PROVA", Toast.LENGTH_SHORT).show();
+                                break;
                                     /*case R.id.menu_download:
                                         // Create the txt file and save it
                                         saveFile("" + terminalView.getText());
@@ -258,55 +275,52 @@ public class MainActivity extends AppCompatActivity {
                                     /*case R.id.menu_songs://canzoni( da rimuovere e spostare nell'altra layut)
                                         new SongsDialog().show(getSupportFragmentManager(), SongsDialog.TAG);
                                         break;*/
-                                }
-                                return true;
-                            }
-                        });
-
-                        popupMenu.show();
+                        }
+                        return true;
                     }
                 });
 
+                popupMenu.show();
+            }
+        });
 
 
-                switchSongBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        switchToMusicActivity();
-                    }
-                });
+        switchSongBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchToMusicActivity();
+            }
+        });
 
 
+        emergencyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myTcpClient2.send(makeCommand(Commands.MOVE, 1, 1));
+            }
+        });
+
+        joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
+                                       @Override
+                                       public void onMove(int angle, int strength) {
+
+                                           joystick(angle, strength);
+                                       }
+                                   },500
+        );
+
+        
 
 
-
-
-                emergencyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        myTcpClient2.send(makeCommand(Commands.MOVE, 1, 1));
-                    }
-                });
-
-                joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
-                                               @Override
-                                               public void onMove(int angle, int strength) {
-
-                                                    joystick(angle,strength);
-
-                                               }
-                                           }
-                );
-
-                slider.addOnChangeListener(new Slider.OnChangeListener() {
-                    @SuppressLint("RestrictedApi")
-                    @Override
-                    public void onValueChange(@NonNull Slider slider, float _value, boolean fromUser) {
-                        int value = (int)_value;
-                        System.out.println(""+value);
-                    }
-                });
-        }
+        slider.addOnChangeListener(new Slider.OnChangeListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onValueChange(@NonNull Slider slider, float _value, boolean fromUser) {
+                int value = (int) _value;
+                System.out.println("" + value);
+            }
+        });
+    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -474,7 +488,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
-    }/**DA MODIFICARE**/
+    }
+
+    /**
+     * DA MODIFICARE
+     **/
 
     private void updateSpinner() {
         try {
@@ -534,11 +552,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-/*
-* Serve per controllare la schemata della musica
-* */
+    /*
+     * Serve per controllare la schemata della musica
+     * */
 
-    public void switchToMusicActivity(){
+    public void switchToMusicActivity() {
         setContentView(R.layout.activity_song_control);
         playButton = findViewById(R.id.play_button);
         muteButton = findViewById(R.id.mute_button);
@@ -546,8 +564,8 @@ public class MainActivity extends AppCompatActivity {
         volumeSeekBar = findViewById(R.id.volume_seekBar);
         nextButton = findViewById(R.id.next_button);
         previousButton = findViewById(R.id.previous_button);
-        switchMainBtn = (Button)findViewById(R.id.switchMainBtn);
-        addButton=findViewById(R.id.addButton);
+        switchMainBtn = (Button) findViewById(R.id.switchMainBtn);
+        addButton = findViewById(R.id.addButton);
 
         updateSpinner();
 
@@ -642,17 +660,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void joystick(int oldangle, int strenght) {
+        double angle= (double) (oldangle* (Math.PI/180));
+        float val_x = (float) (Math.cos((double) angle) * 100);
+        float val_y = (float) (Math.sin((double) angle) * 100);
+        float val_tot = (float) (Math.sqrt(Math.pow(val_x, 2) + Math.pow(val_y, 2)));
 
-    public void joystick(int angle, int strenght){
-        float val_x= (float)(Math.cos((double)angle)*100);
-        float val_y= (float)(Math.sin((double)angle)*100);
-        float val_tot = (float)(Math.sqrt(Math.pow(val_x,2)+Math.pow(val_y,2)));
+        if(strenght==0){
+            val_x=0;
+            val_y=0;
+        }
 
-        float potenzaDx= calcolaPotenze(val_x,val_y,val_tot)[0];
-        float potenzaSx = calcolaPotenze(val_x,val_y,val_tot)[1];
+        float potenzaDx = calcolaPotenze(val_x, val_y, strenght)[0];
+        float potenzaSx = calcolaPotenze(val_x, val_y, strenght)[1];
 
-        myTcpClient2.send(costruisciComando(potenzaDx,potenzaSx));
-        Log.d("Joystick","PotenzaDx: "+String.valueOf(potenzaDx)+" PotenzaSx: "+String.valueOf(potenzaSx));
+        myTcpClient2.send(costruisciComando(potenzaDx, potenzaSx));
+        Log.d("Joystick", "PotenzaDx: " + String.valueOf(potenzaDx) + " PotenzaSx: " + String.valueOf(potenzaSx));
 
 
     }
@@ -667,8 +690,6 @@ public class MainActivity extends AppCompatActivity {
      * .percentualeTot() resitiuisce la distanza dal centro della manopola in percentuale (pitagora sulle coordinate x e y e poi divido per il raggio massimo). Il valore va da 0 a 100
      *
      */
-
-
 
 
     public float[] calcolaPotenze(float percentualeX, float percentualeY, float percentualeTot) {
@@ -717,7 +738,7 @@ public class MainActivity extends AppCompatActivity {
         potenzaDx *= percentualeTot;
         potenzaSx *= percentualeTot;
 
-        return new float[] {potenzaDx, potenzaSx};
+        return new float[]{potenzaDx, potenzaSx};
     }
 
     public byte[] costruisciComando(float potenzaDx, float potenzaSx) {
