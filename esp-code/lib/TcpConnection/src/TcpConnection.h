@@ -4,8 +4,10 @@
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
 
-#define MAX_PACKET_SIZE 256
-#define SERIAL_BAUD_RATE 74880
+#ifndef SERIAL_BAUD_RATE
+    #define SERIAL_BAUD_RATE 115200
+    #define MAX_PACKET_SIZE 256
+#endif
 
 class TcpConnection
 {

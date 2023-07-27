@@ -49,7 +49,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define PIN_LED_OCCHI A5
 #define PIN_CHK_VBAT A6
 // Varie
-#define ESP_BAUD_RATE 74880
+#define ESP_BAUD_RATE 115200
 #define SERIAL_BAUD_RATE 9600
 #define TIMEOUT_ESP_SERIAL 1000
 #define MIN_VBAT 43
@@ -82,6 +82,8 @@ unsigned long timeout = 0;
 boolean timeoutActive = false;
 
 unsigned long batteryLowTimeout = 0;
+
+boolean readyCommandSent = false;
 
 void setup()
 {
@@ -159,8 +161,15 @@ void loop()
         return;
     }
 
+    if (!readyCommandSent)
+    {
+        sendCommand(Command::makeCommand(CODE_SYNC));
+        readyCommandSent = true;
+    }
+
     if (esp.available() >= COMMAND_SIZE)
     {
+        readyCommandSent = false;
         timeoutActive = OFF;
 
         uint8_t bufferIn[COMMAND_SIZE];
@@ -171,7 +180,7 @@ void loop()
     }
 
     // Blocco di codice che ripulisce la seriale con l'esp in caso ci siano dei dati che non sono compatibili con i comandi
-    if (esp.available() % COMMAND_SIZE != 0)
+    /* if (esp.available() % COMMAND_SIZE != 0)
     {
         // Se c'è qualcosa nel buffer ma non è del numero giusto per essere letto
         if (!timeoutActive)
@@ -188,7 +197,7 @@ void loop()
             // E blocca il timeout
             timeoutActive = OFF;
         }
-    }
+    } */
 }
 
 void execute(Command command)

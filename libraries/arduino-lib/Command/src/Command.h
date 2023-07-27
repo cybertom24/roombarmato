@@ -36,10 +36,13 @@
 #define CODE_CKECK_BATTERY    0x0F
 #define CODE_BATTERY_STATUS   0x10
 // ESP
-#define CODE_ESP_READY        0x11
+#define CODE_SYNC             0x11
+#define CODE_CONNECTED        0x14
+#define CODE_DISCONNECTED     0x15
 // Errors
 #define CODE_LAUNCH_FAILURE   0xC8
 #define CODE_BATTERY_LOW      0xC9
+#define CODE_HOLDER_FULL      0xCA
 // Utility
 #define CODE_NOT_FOUND        0xFF
 
