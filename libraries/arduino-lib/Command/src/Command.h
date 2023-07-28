@@ -20,10 +20,10 @@
 #define CODE_VOLUME_DOWN      0x04
 #define CODE_TOGGLE_MUTE      0x05
 #define CODE_SET_VOLUME       0x06
-#define CODE_NEXT_SONG        0x12
-#define CODE_PREVIOUS_SONG    0x13
+#define CODE_NEXT_SONG        0x07
+#define CODE_PREVIOUS_SONG    0x08
 // Micellaneous
-#define CODE_EYES             0x07
+#define CODE_EYES             0x0D
 // Movement
 #define CODE_MOVE             0x09
 #define CODE_OPEN_LID         0x0A
@@ -31,12 +31,12 @@
 // Combact
 #define CODE_FIRE             0x0C
 // Checks
-#define CODE_CHECK_CONNECTION 0x0D
-#define CODE_CONNECTION_OK    0x0E
+#define CODE_CHECK_CONNECTION 0x16
+#define CODE_CONNECTION_OK    0x17
 #define CODE_CKECK_BATTERY    0x0F
 #define CODE_BATTERY_STATUS   0x10
 // ESP
-#define CODE_SYNC             0x11
+#define CODE_SYNC             0x18
 #define CODE_CONNECTED        0x14
 #define CODE_DISCONNECTED     0x15
 // Errors
