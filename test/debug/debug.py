@@ -8,7 +8,8 @@ from time import sleep
 ADDRESS = "192.168.4.1"
 PORT = 4000
 BUFFER_SIZE = 1024
-millis = 200
+millis = 400
+duration = 100
 
 # Funzioni
 def get_command_from_console():
@@ -51,9 +52,10 @@ listen_thread.start()
 
 # Proviamo a riempire l'holder
 print("spam test:", millis, " ms between messages")
-i = 50
+i = duration
 while i > 0:
-    sendCommand((command.START_BYTE, 9, 2, i, 100, command.END_BYTE), sck)
+    # sendCommand((command.START_BYTE, 9, 2, i, 100, command.END_BYTE), sck)
+    sendCommand((100, 101, 102, 103, 104, 10), sck)
     i -= 1
     sleep(millis / 1000)
 

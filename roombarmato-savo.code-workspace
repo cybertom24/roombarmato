@@ -18,7 +18,16 @@
         {
             "name": "test-esp",
             "path": "test/test-esp"
+        },
+        {
+            "name": "230802-113031-uno",
+            "path": "../../../PlatformIO/Projects/230802-113031-uno"
         }
     ],
-    "settings": {}
+    "settings": {
+        "files.associations": {
+            "cstring": "cpp",
+            "variant": "cpp"
+        }
+    }
 }

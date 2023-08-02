@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @author your name (you@domain.com)
+ * @author cybertom
  * @brief
  * @version 0.1
  * @date 2023-07-22
@@ -18,6 +18,7 @@
 #include <MP3Serial.h>
 #include <SoftwareSerial.h>
 #include <Servo.h>
+#include <string.h>
 
 /* COSTANTI */
 #define DEBUG true
@@ -52,7 +53,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define PIN_LED_OCCHI A5
 #define PIN_CHK_VBAT A6
 // Varie
-#define ESP_BAUD_RATE           76800
+#define ESP_BAUD_RATE           115200
 #define SERIAL_BAUD_RATE        9600
 #define TIMEOUT_ESP_SERIAL      200
 #define MIN_VBAT                43

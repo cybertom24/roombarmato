@@ -1,13 +1,14 @@
 /* LIBRERIE */
 #include <TcpConnection.h>
 #include "../../libraries/arduino-lib/Command/src/Command.h"
+#include <string.h>
 
 /* COSTANTI */
 #define PIN_LED             2
 #define SSID                "Roombarmato"
 #define PASSWORD            "e1m1-2077"
 #define PORT                4000
-#define SERIAL_BAUD_RATE    76800
+#define SERIAL_BAUD_RATE    115200
 #define COMMAND_HOLDER_SIZE 64
 #define TIMEOUT_SERIAL      1000
 
