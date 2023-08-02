@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -53,6 +54,7 @@ import java.util.TimerTask;
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class MainActivity extends AppCompatActivity {
+    int loopInt=200;
     //CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
     TcpClient2 myTcpClient2 = new TcpClient2("192.168.4.1", 4000);
     // Objects
@@ -181,30 +183,39 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        final Handler handler = new Handler();
+        final int delay = 500; // 1000 milliseconds == 1 second
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (joystick.getX()==0 && joystick.getY()==0 ) {myTcpClient2.send(makeCommand(Commands.MOVE, 1, 1));}
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
 
 
         rocketBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn1.setBackgroundResource(R.color.scarica);
+                rocketBtn1.setBackgroundResource(R.drawable.rocket_button_usata);
             }
         });
         rocketBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn2.setBackgroundResource(R.color.scarica);
+                rocketBtn2.setBackgroundResource(R.drawable.rocket_button_usata);
             }
         });
         rocketBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn3.setBackgroundResource(R.color.scarica);
+                rocketBtn3.setBackgroundResource(R.drawable.rocket_button_usata);
             }
         });
         rocketBtn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn4.setBackgroundResource(R.color.scarica);
+                rocketBtn4.setBackgroundResource(R.drawable.rocket_button_usata);
             }
         });
 
@@ -252,10 +263,10 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.menu_reload:
                                 rocketsIndicator.offPaint.setColor(Color.GREEN);
                                 Toast.makeText(getApplicationContext(), "Ciaooo", Toast.LENGTH_LONG).show();
-                                rocketBtn1.setBackgroundResource(R.color.textColor);
-                                rocketBtn2.setBackgroundResource(R.color.textColor);
-                                rocketBtn3.setBackgroundResource(R.color.textColor);
-                                rocketBtn4.setBackgroundResource(R.color.textColor);
+                                rocketBtn1.setBackgroundResource(R.drawable.rockt_button_libero);
+                                rocketBtn2.setBackgroundResource(R.drawable.rockt_button_libero);
+                                rocketBtn3.setBackgroundResource(R.drawable.rockt_button_libero);
+                                rocketBtn4.setBackgroundResource(R.drawable.rockt_button_libero);
 
 
                                 break;
@@ -306,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
 
                                            joystick(angle, strength);
                                        }
-                                   },500
+                                   },loopInt
         );
 
         

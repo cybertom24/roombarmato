@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/design_default_color_secondary_variant"
+    android:background="@android:color/system_accent2_100"
     tools:context=".MainActivity"
     tools:ignore="MissingDefaultResource">
 
@@ -108,6 +108,7 @@
         android:textColor="@color/knobColor"
         android:textSize="@dimen/lever_textSize"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/slider_angle"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -121,6 +122,7 @@
         android:textColor="@color/knobColor"
         android:textSize="@dimen/lever_textSize"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -160,22 +162,22 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/rocketButton4"
+        android:id="@+id/rocketButton1"
         android:layout_width="43dp"
         android:layout_height="43dp"
-        android:layout_marginTop="17dp"
-        android:layout_marginEnd="164dp"
-        android:background="#25FA00"
-        app:layout_constraintEnd_toStartOf="@+id/btnSwitchSong"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rockt_button_libero"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/rocketButton3"
         android:layout_width="43dp"
         android:layout_height="43dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="17dp"
-        android:background="#25FA00"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rockt_button_libero"
         app:layout_constraintStart_toEndOf="@+id/rocketButton2"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -183,19 +185,20 @@
         android:id="@+id/rocketButton2"
         android:layout_width="43dp"
         android:layout_height="43dp"
-        android:layout_marginStart="11dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
-        android:background="#25FA00"
+        android:background="@drawable/rockt_button_libero"
         app:layout_constraintStart_toEndOf="@+id/rocketButton1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/rocketButton1"
+        android:id="@+id/rocketButton4"
         android:layout_width="43dp"
         android:layout_height="43dp"
         android:layout_marginTop="16dp"
-        android:background="@color/textColor"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="144dp"
+        android:background="@drawable/rockt_button_libero"
+        app:layout_constraintEnd_toStartOf="@+id/btnSwitchSong"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
