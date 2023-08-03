@@ -1,7 +1,6 @@
 /* LIBRERIE */
 #include <TcpConnection.h>
 #include "../../libraries/arduino-lib/Command/src/Command.h"
-// #include "../../libraries/arduino-lib/SecureSerial/src/SecureSerialHW.h"
 #include <SecureSerialHW.h>
 #include <string.h>
 
@@ -119,15 +118,15 @@ void handleTCPpacket()
     else
         holdCommand(packet); */
 
-    Serial.write(packet, COMMAND_SIZE);
+    sserial.sendPacket(packet, COMMAND_SIZE);
 
     turnOnLed();
 }
 
 void handleSerialPacket()
 {
-    uint8_t message[COMMAND_SIZE];
-    Serial.readBytes(message, COMMAND_SIZE);
+    uint8_t message[MESSAGE_LENGTH];
+    sserial.getPacket(message);
     Command c(message);
 
     if (c.isRight())
@@ -137,8 +136,6 @@ void handleSerialPacket()
         else
             tcp.send(message, COMMAND_SIZE);
     }
-
-    timeoutActive = false;
 }
 
 void holdCommand(uint8_t *command)
