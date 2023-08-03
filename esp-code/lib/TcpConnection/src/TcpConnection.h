@@ -6,7 +6,10 @@
 
 #ifndef SERIAL_BAUD_RATE
     #define SERIAL_BAUD_RATE 115200
-    #define MAX_PACKET_SIZE 256
+#endif
+
+#ifndef MAX_BUFFER_SIZE
+    #define MAX_BUFFER_SIZE 256
 #endif
 
 class TcpConnection
@@ -19,35 +22,28 @@ public:
 
     // Controlla che si sia collegato qualcuno. Attenzione: la funzione blocca l'esecuzione finché non si collega qualcuno a meno che non scada il timeout
     // Per disattivare il timeout impostarlo a zero. Esprimere il timeout in microsecondi
-    boolean waitClient(unsigned long timeout);
+    boolean waitClient(size_t timeout);
 
     // Ritorna se c'è un client connesso
     boolean clientConnected();
 
-    // Ritorna la lunghezza del pacchetto arrivato (se la lunghezza è -1 vuol dire che non c'è nessun pacchetto)
-    int checkPackets();
+    // Ritorna il numero di byte disponibili da leggere
+    size_t available();
 
     // Copia il messaggio che è arrivato nello spazio di memoria indicato dal puntatore passato come argomento
     // ATTENZIONE: Il puntatore array deve già puntare a della memoria sufficientemente grande
-    // La funzione ritorna 0 se è andata a buon fine, -1 in caso ci siano stati errori
-    byte getPacket(byte *array);
-
-    // Ritorna la dimensione in byte dell'ultimo paccchetto arrivato e che è al momento contenuto nel buffer
-    int getPacketSize();
+    // Ritorna il numero di bytes trascritti
+    size_t readBytes(uint8_t *array, size_t num);
 
     // Invia un messaggio all'ultimo dispositivo che ha comunicato. Ritorna true se l'invio è andato a buon fine,
     // altrimenti ritorna false
-    boolean send(byte *message, int length);
-    bool debug = false;
+    boolean send(uint8_t *message, int length);
+    boolean debug = false;
 
 private:
     String MYSSID, MYPASSWORD;
     int MYPORT;
     WiFiServer *tcpServer;
     WiFiClient client;
-    String senderIP;
-    int senderPort;
-    byte bufferIn[MAX_PACKET_SIZE]; // Buffer per tenere i pacchetti ricevuti
-    int receivedPacketSize;
 };
 #endif

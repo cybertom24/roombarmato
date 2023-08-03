@@ -4,9 +4,9 @@
 /* LIBRERIE */
 #include "Arduino.h"
 
-#define COMMAND_SIZE 0x06
-#define INDEX_CODE 0x01
-#define INDEX_SIZE 0x02
+#define COMMAND_SIZE     0x06
+#define INDEX_CODE       0x01
+#define INDEX_SIZE       0x02
 #define INDEX_START_DATA 0x03
 
 /* COMANDI */
@@ -50,22 +50,22 @@
 class Command
 {
 public:
-    Command(byte builder[COMMAND_SIZE])
+    Command(uint8_t builder[COMMAND_SIZE])
     {
         memcpy(buffer, builder, COMMAND_SIZE);
     };
 
-    byte code()
+    uint8_t code()
     {
         return buffer[INDEX_CODE];
     };
 
-    byte size()
+    uint8_t size()
     {
         return buffer[INDEX_SIZE];
     }
 
-    void data(byte *data)
+    void data(uint8_t *data)
     {
         memcpy(data, &buffer[INDEX_START_DATA], size());
     }
@@ -75,30 +75,30 @@ public:
         return isRight(buffer);
     };
 
-    static boolean isRight(byte *commandBuffer)
+    static boolean isRight(uint8_t *commandBuffer)
     {
         return commandBuffer[0] == COMMAND_START_BYTE && commandBuffer[COMMAND_SIZE - 1] == COMMAND_END_BYTE;
     };
 
-    static Command makeCommand(byte code)
+    static Command makeCommand(uint8_t code)
     {
-        byte builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x00, 0x00, 0x00, COMMAND_END_BYTE};
+        uint8_t builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x00, 0x00, 0x00, COMMAND_END_BYTE};
         Command c(builder);
         return c;
     };
-    static Command makeCommand(byte code, byte data0)
+    static Command makeCommand(uint8_t code, uint8_t data0)
     {
-        byte builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x01, data0, 0x00, COMMAND_END_BYTE};
+        uint8_t builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x01, data0, 0x00, COMMAND_END_BYTE};
         Command c(builder);
         return c;
     };
-    static Command makeCommand(byte code, byte data0, byte data1)
+    static Command makeCommand(uint8_t code, uint8_t data0, uint8_t data1)
     {
-        byte builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x02, data0, data1, COMMAND_END_BYTE};
+        uint8_t builder[COMMAND_SIZE] = {COMMAND_START_BYTE, code, 0x02, data0, data1, COMMAND_END_BYTE};
         Command c(builder);
         return c;
     };
 
-    byte buffer[COMMAND_SIZE];
+    uint8_t buffer[COMMAND_SIZE];
 };
 #endif

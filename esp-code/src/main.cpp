@@ -1,6 +1,8 @@
 /* LIBRERIE */
 #include <TcpConnection.h>
 #include "../../libraries/arduino-lib/Command/src/Command.h"
+// #include "../../libraries/arduino-lib/SecureSerial/src/SecureSerialHW.h"
+#include <SecureSerialHW.h>
 #include <string.h>
 
 /* COSTANTI */
@@ -8,24 +10,24 @@
 #define SSID                "Roombarmato"
 #define PASSWORD            "e1m1-2077"
 #define PORT                4000
-#define SERIAL_BAUD_RATE    115200
+#define SERIAL_BAUD_RATE    57600
 #define COMMAND_HOLDER_SIZE 64
+#define MESSAGE_LENGTH      (COMMAND_SIZE)
 #define TIMEOUT_SERIAL      1000
+#define ECC_SIZE            4
 
 /* FUNZIONI */
 void turnOffLed();
 void turnOnLed();
 void handleTCPpacket();
 void handleSerialPacket();
-void holdCommand(byte *command);
-void retrieveCommand(byte *destination);
+void holdCommand(uint8_t *command);
+void retrieveCommand(uint8_t *destination);
 void resetHolder();
 void sendCommandTCP(Command command);
 void sendCommandSerial(Command command);
-void handleSerialCleaness();
-void clearSerial();
 
-TcpConnection conn(SSID, PASSWORD, PORT);
+TcpConnection tcp(SSID, PASSWORD, PORT);
 
 // Questo buffer (holder) conterrà tutti i comandi da spedire all'arduino quando sarà pronto.
 uint8_t commandHolder[COMMAND_HOLDER_SIZE * COMMAND_SIZE];
@@ -37,9 +39,11 @@ boolean arduinoReady = false;
 unsigned long timeout = 0;
 boolean timeoutActive = false;
 
+SecureSerialHW sserial;
+
 void setup()
 {
-    Serial.begin(SERIAL_BAUD_RATE);
+    sserial.begin(&Serial, SERIAL_BAUD_RATE);
     while (!Serial)
         ; // Aspetta che la seriale venga inizializzata
 
@@ -47,7 +51,7 @@ void setup()
     // Durante il boot il led è acceso, si spegne a boot completato
     turnOnLed();
 
-    conn.setup();
+    tcp.setup();
     resetHolder();
 
     turnOffLed();
@@ -56,7 +60,7 @@ void setup()
 void loop()
 {
     // Aspetta un nuovo client aspettando indefinitamente
-    while (!conn.waitClient(0))
+    while (!tcp.waitClient(0))
         ;
 
     // Serial.println("Client connected");
@@ -64,29 +68,28 @@ void loop()
     turnOnLed();
     sendCommandSerial(Command::makeCommand(CODE_CONNECTED));
 
-    while (conn.clientConnected())
+    while (tcp.clientConnected())
     {
-        if (conn.checkPackets() > 0)
+        if (tcp.available() >= COMMAND_SIZE)
             handleTCPpacket();
 
-        if (Serial.available() >= COMMAND_SIZE)
+        if (sserial.available() > 0)
             handleSerialPacket();
 
         // Se arduino è pronto a ricevere invia il prossimo comando disponibile
-        if (arduinoReady && commandsToBeRead > 0)
+        /* if (arduinoReady && commandsToBeRead > 0)
         {
-            byte command[COMMAND_SIZE];
+            uint8_t command[COMMAND_SIZE];
             retrieveCommand(command);
             Serial.write(command, COMMAND_SIZE);
             arduinoReady = false;
-        }
+        } */
 
-        handleSerialCleaness();
+        sserial.handleCleaness();
     }
 
-    clearSerial();
     sendCommandSerial(Command::makeCommand(CODE_DISCONNECTED));
-    resetHolder();
+    // resetHolder();
 
     // Serial.println("Client disconnected");
     // Spegni il led
@@ -108,18 +111,15 @@ void handleTCPpacket()
 {
     turnOffLed();
 
-    int size = conn.getPacketSize();
-    byte packet[size];
-    conn.getPacket(packet);
+    uint8_t packet[COMMAND_SIZE];
+    tcp.readBytes(packet, COMMAND_SIZE);
     // Se è della dimensione giusta copialo nel commandHolder, sennò scartalo. Indica che qualcosa di nuovo è arrivato
-    if (size == COMMAND_SIZE)
-    {
-        // Se ho riempito l'holder dei comandi invia un messaggio di errore
-        if (commandsToBeRead == COMMAND_HOLDER_SIZE)
-            sendCommandTCP(Command::makeCommand(CODE_HOLDER_FULL));
-        else
-            holdCommand(packet);
-    }
+    /* if (commandsToBeRead == COMMAND_HOLDER_SIZE)
+        sendCommandTCP(Command::makeCommand(CODE_HOLDER_FULL));
+    else
+        holdCommand(packet); */
+
+    Serial.write(packet, COMMAND_SIZE);
 
     turnOnLed();
 }
@@ -135,13 +135,13 @@ void handleSerialPacket()
         if (c.code() == CODE_SYNC)
             arduinoReady = true;
         else
-            conn.send(message, COMMAND_SIZE);
+            tcp.send(message, COMMAND_SIZE);
     }
 
     timeoutActive = false;
 }
 
-void holdCommand(byte *command)
+void holdCommand(uint8_t *command)
 {
     memcpy(&commandHolder[commandHolderWritingIndex], command, COMMAND_SIZE);
     commandHolderWritingIndex += COMMAND_SIZE;
@@ -152,7 +152,7 @@ void holdCommand(byte *command)
 }
 
 // Copia il nuovo comando da inviare sulla seriale nell'indirizzo passato
-void retrieveCommand(byte *destination)
+void retrieveCommand(uint8_t *destination)
 {
     memcpy(destination, &commandHolder[commandHolderReadingIndex], COMMAND_SIZE);
     commandsToBeRead--;
@@ -172,40 +172,10 @@ void resetHolder()
 
 void sendCommandTCP(Command command)
 {
-    conn.send(command.buffer, COMMAND_SIZE);
+    tcp.send(command.buffer, COMMAND_SIZE);
 }
 
 void sendCommandSerial(Command command)
 {
     Serial.write(command.buffer, COMMAND_SIZE);
-}
-
-void handleSerialCleaness()
-{
-    if (Serial.available() % COMMAND_SIZE != 0)
-    {
-        // Se c'è qualcosa nel buffer ma non è del numero giusto per essere letto
-        if (!timeoutActive)
-        {
-            // Fai partire il espTimeout se non è ancora partito
-            timeout = millis();
-            timeoutActive = true;
-        }
-        // Se è scaduto il timeout ripulisci la seriale
-        else if (millis() >= timeout + TIMEOUT_SERIAL)
-        {
-            clearSerial();
-            // E blocca il timeout
-            timeoutActive = false;
-        }
-    }
-}
-
-void clearSerial()
-{
-    if (Serial.available() > 0)
-    {
-        uint8_t garbage[Serial.available()];
-        Serial.readBytes(garbage, Serial.available());
-    }
 }

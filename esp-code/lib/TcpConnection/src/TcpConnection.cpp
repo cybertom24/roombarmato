@@ -10,14 +10,16 @@ TcpConnection::TcpConnection(String mySsid, String myPassword, int myPort)
 
 void TcpConnection::setup()
 {
-    if (!Serial)
+    
+    if (debug)
     {
+        if (!Serial)
+        {
         Serial.begin(SERIAL_BAUD_RATE);
         while (!Serial)
             ; // Wait
-    }
-    if (debug)
-    {
+        }
+
         Serial.println("\n");
         Serial.println("Booting up...");
     }
@@ -40,7 +42,7 @@ void TcpConnection::setup()
     }
 }
 
-boolean TcpConnection::waitClient(unsigned long timeout)
+boolean TcpConnection::waitClient(size_t timeout)
 {
     // If timeout is 0 wait indefinetly
     if (timeout == 0)
@@ -80,42 +82,26 @@ boolean TcpConnection::clientConnected()
     return true;
 }
 
-int TcpConnection::checkPackets()
+size_t TcpConnection::available()
 {
     if (!clientConnected())
         return -1;
 
-    if (client.available() == 0)
-        return -1;
-
-    receivedPacketSize = client.available();
-
-    // Truncate the packet received
-    if (receivedPacketSize > MAX_PACKET_SIZE)
-        receivedPacketSize = MAX_PACKET_SIZE;
-
-    client.read(bufferIn, receivedPacketSize);
-
-    if (debug)
-    {
-        Serial.printf("Received packet from %s:%d of lenght: %d\n", client.remoteIP().toString().c_str(), client.remotePort(), receivedPacketSize);
-    }
-
-    return receivedPacketSize;
+    return client.available();
 }
 
-int TcpConnection::getPacketSize()
-{
-    return receivedPacketSize;
+size_t TcpConnection::readBytes(uint8_t *array, size_t num)
+{   
+    if(!clientConnected())
+        return 0;
+    
+    if(available() == 0 || available() < num || num < 0)
+        return 0;
+
+    return client.readBytes(array, num);
 }
 
-byte TcpConnection::getPacket(byte *array)
-{
-    memcpy(array, bufferIn, receivedPacketSize);
-    return 0;
-}
-
-boolean TcpConnection::send(byte *message, int length) 
+boolean TcpConnection::send(uint8_t *message, int length) 
 {
     if(!clientConnected())
         return false;

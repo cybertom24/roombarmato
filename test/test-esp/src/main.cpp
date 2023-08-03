@@ -3,7 +3,7 @@
 /* LIBRERIE */
 #include <TcpConnection.h>
 #include "../../../libraries/arduino-lib/Command/src/Command.h"
-#include "../../../libraries/arduino-lib/Arduino-FEC/src/RS-FEC.h"
+// #include "../../../libraries/arduino-lib/Arduino-FEC/src/RS-FEC.h"
 #include <string.h>
 
 /* COSTANTI */
@@ -11,7 +11,7 @@
 #define SSID                "Roombarmato"
 #define PASSWORD            "e1m1-2077"
 #define PORT                4000
-#define SERIAL_BAUD_RATE    115200
+#define SERIAL_BAUD_RATE    57600
 #define COMMAND_HOLDER_SIZE 64
 #define TIMEOUT_SERIAL      1000
 #define ECC_LENGTH          4               // I byte possibili da sistemare sono massimo ECC / 2
@@ -28,7 +28,7 @@ void clearSerial();
 
 TcpConnection conn(SSID, PASSWORD, PORT);
 
-RS::ReedSolomon<COMMAND_SIZE, ECC_LENGTH> rs;
+// RS::ReedSolomon<COMMAND_SIZE, ECC_LENGTH> rs;
 // I messaggi codificati con ECC saranno lunghi COMMAND_SIZE + ECC_LENTGH
 
 void setup()
@@ -85,17 +85,16 @@ void handleTCPpacket()
 {
     turnOffLed();
 
-    int size = conn.getPacketSize();
-    
-    if(size != COMMAND_SIZE)
-        return;
-    
-    uint8_t packet[COMMAND_SIZE];
+    int size = conn.getPacketSize();    
+    uint8_t packet[size];
     conn.getPacket(packet);
     
-    uint8_t encoded[COMMAND_SIZE + ECC_LENGTH];
+    /* uint8_t encoded[COMMAND_SIZE + ECC_LENGTH];
     rs.Encode(packet, encoded);
-    Serial.write(encoded, COMMAND_SIZE + ECC_LENGTH);
+    Serial.write(encoded, COMMAND_SIZE + ECC_LENGTH); */
+
+    Serial.println(size, DEC);
+    Serial.write(packet, size);
 
     turnOnLed();
 }

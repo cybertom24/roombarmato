@@ -8,8 +8,8 @@ from time import sleep
 ADDRESS = "192.168.4.1"
 PORT = 4000
 BUFFER_SIZE = 1024
-millis = 400
-duration = 100
+millis = 20
+duration = 1000
 
 # Funzioni
 def get_command_from_console():

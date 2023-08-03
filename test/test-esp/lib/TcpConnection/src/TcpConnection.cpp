@@ -109,13 +109,13 @@ int TcpConnection::getPacketSize()
     return receivedPacketSize;
 }
 
-byte TcpConnection::getPacket(byte *array)
+uint8_t TcpConnection::getPacket(uint8_t *array)
 {
     memcpy(array, bufferIn, receivedPacketSize);
     return 0;
 }
 
-boolean TcpConnection::send(byte *message, int length) 
+boolean TcpConnection::send(uint8_t *message, int length) 
 {
     if(!clientConnected())
         return false;
