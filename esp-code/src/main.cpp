@@ -76,19 +76,19 @@ void loop()
             handleSerialPacket();
 
         // Se arduino è pronto a ricevere invia il prossimo comando disponibile
-        /* if (arduinoReady && commandsToBeRead > 0)
+        if (arduinoReady && commandsToBeRead > 0)
         {
             uint8_t command[COMMAND_SIZE];
             retrieveCommand(command);
-            Serial.write(command, COMMAND_SIZE);
+            sserial.sendPacket(command, COMMAND_SIZE);
             arduinoReady = false;
-        } */
+        }
 
         sserial.handleCleaness();
     }
 
     sendCommandSerial(Command::makeCommand(CODE_DISCONNECTED));
-    // resetHolder();
+    resetHolder();
 
     // Serial.println("Client disconnected");
     // Spegni il led
@@ -112,13 +112,11 @@ void handleTCPpacket()
 
     uint8_t packet[COMMAND_SIZE];
     tcp.readBytes(packet, COMMAND_SIZE);
-    // Se è della dimensione giusta copialo nel commandHolder, sennò scartalo. Indica che qualcosa di nuovo è arrivato
-    /* if (commandsToBeRead == COMMAND_HOLDER_SIZE)
+    // Salvalo nel command holder
+    if (commandsToBeRead == COMMAND_HOLDER_SIZE)
         sendCommandTCP(Command::makeCommand(CODE_HOLDER_FULL));
     else
-        holdCommand(packet); */
-
-    sserial.sendPacket(packet, COMMAND_SIZE);
+        holdCommand(packet);
 
     turnOnLed();
 }
@@ -144,18 +142,21 @@ void holdCommand(uint8_t *command)
     commandHolderWritingIndex += COMMAND_SIZE;
     commandsToBeRead++;
     // Se supera il limite fallo tornare all'inizio
-    if (commandHolderWritingIndex >= COMMAND_HOLDER_SIZE)
+    if (commandHolderWritingIndex >= COMMAND_HOLDER_SIZE * COMMAND_SIZE)
         commandHolderWritingIndex = 0;
 }
 
 // Copia il nuovo comando da inviare sulla seriale nell'indirizzo passato
 void retrieveCommand(uint8_t *destination)
 {
+    if(commandsToBeRead == 0)
+        return;
+
     memcpy(destination, &commandHolder[commandHolderReadingIndex], COMMAND_SIZE);
     commandsToBeRead--;
     commandHolderReadingIndex += COMMAND_SIZE;
     // Se supera il limite fallo tornare all'inizio
-    if (commandHolderReadingIndex >= COMMAND_HOLDER_SIZE)
+    if (commandHolderReadingIndex >= COMMAND_HOLDER_SIZE * COMMAND_SIZE)
         commandHolderReadingIndex = 0;
 }
 

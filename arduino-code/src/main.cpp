@@ -22,9 +22,8 @@
 #include <SecureSerialSW.h>
 
 /* COSTANTI */
-#define DEBUG false
+#define DEBUG true
 #define SUPER false
-uint8_t expected[] = {0x00, 0xFF, 0xEA, 0xAE, 0x3C, 0xC3};
 
 #define ON  HIGH
 #define OFF LOW
@@ -66,7 +65,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define CLOSED_LID_ANGLE        5
 #define OPENED_LID_ANGLE        65
 #define BATTERY_LOW_DELAY_ERROR 2000
-#define CANNA_ACCESA_DELAY      200
+#define CANNA_ACCESA_DELAY      2000
 #define MOTOR_DELAY_AUTO_OFF    3000
 
 /* FUNZIONI */
@@ -90,18 +89,21 @@ SecureSerialSW::SSSW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
 Servo          servoDx;
 
 // Timeout
-unsigned long batteryLowTimeout = 0;
-unsigned long motorTimeout = 0;
+unsigned long batteryLowTimeout   = 0;
+unsigned long motorTimeout        = 0;
 unsigned long readyCommandTimeout = 0;
+unsigned long rocketsTimeout[4]   = { 0 };
 
 boolean readyCommandSent = false;
 
 struct Status
 {
-    uint8_t motorDx, motorSx;
-    boolean eyesLit;
-    boolean lidOpen;
-    uint8_t rockets;
+    uint8_t motorDx = 1, motorSx = 1;
+    boolean eyesLit = OFF;
+    boolean lidOpen = false;
+    uint8_t rockets = 0;
+    boolean connected = false;
+    boolean musicPlaying = false;
 } status;
 
 void setup()
@@ -124,13 +126,11 @@ void setup()
     // Inizializzazione delle 2 seriali, quella per l'esp (esp) e quella per l'mp3 (mp3)
     esp.begin(&espSerial, ESP_BAUD_RATE);
 
-    Serial.begin(ESP_BAUD_RATE);
-
-    /* if (DEBUG)
+    if (DEBUG)
         Serial.begin(ESP_BAUD_RATE);
     else
         mp3.begin();
- */
+
     // Indica ad arduino che la seriale su cui bisogna concentrarsi ad ascoltare è quella per l'esp
     // Quella per l'mp3 verrà ignorata in caso di dati in arrivo
     // (non è un problema visto che non arriveranno mai dati)
@@ -164,14 +164,14 @@ void loop()
     }
 
     // Invia il messaggio SYNC quando si è pronti o è passato troppo tempo da una risposta
-    /* if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
+    if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
     {
         //if (DEBUG) Serial.println("> Invio comando di SYNC");
 
         sendCommand(Command::makeCommand(CODE_SYNC));
         readyCommandSent = true;
         readyCommandTimeout = millis();
-    } */
+    }
 
     if (esp.available() > 0)
     {
@@ -182,34 +182,20 @@ void loop()
         if (esp.getPacket(packet))
         {
             // Non ci sono errori nel pacchetto
-            
-            boolean right = true;
-            for(int i = 0; i < COMMAND_SIZE; i++) {
-                if(packet[i] != expected[i]) {
-                    right = false;
-                    break;
-                }
-            }
-
-            if(right)
-                Serial.println("0");
-            else
-                Serial.println("1");
-            
             Command c(packet);
 
             if (DEBUG)
             {
+                Serial.print("> Arrivato");
                 if (SUPER)
                 {
-                    Serial.print("> Arrivato:");
                     for (int i = 0; i < COMMAND_SIZE; i++)
                     {
                         Serial.print(" ");
                         Serial.print(packet[i], HEX);
                     }
-                    Serial.println();
                 }
+                Serial.println();
             }
 
             if (c.isRight())
@@ -218,13 +204,36 @@ void loop()
         else
         {
             // Il pacchetto contiene errori. Non può essere assolutamente considerato
-            Serial.println("1");
+            
         }
     }
 
     // Se non sono arrivati messaggi per il controllo dei motori entro tot secondi fermali
     if (status.motorDx > 1 && status.motorSx > 1 && millis() >= motorTimeout + MOTOR_DELAY_AUTO_OFF)
         stopMotor();
+
+    // Spegni le canne se è passato abbastanza tempo
+    if (status.rockets != 0)
+    {
+        // Controlla tutte le canne
+        for(int i = 0; i < 4; i++)
+        {
+            if (((status.rockets & (1 << i)) != 0) && millis() > rocketsTimeout[i] + CANNA_ACCESA_DELAY)
+            {
+                // Se la canna è accesa da troppo tempo
+                digitalWrite(PIN_RAZZI[i], OFF);
+                status.rockets = status.rockets & (~(1 << i));
+
+                if (DEBUG) 
+                {
+                    Serial.print("> Spegnendo canna ");
+                    Serial.println(i, DEC);
+                    Serial.print("> Stato rockets: ");
+                    Serial.println(status.rockets, BIN);
+                }
+            }
+        }
+    }
 
     esp.handleCleaness();
 }
@@ -243,6 +252,7 @@ void execute(Command command)
     case CODE_PLAY:
     {
         mp3.play();
+        status.musicPlaying = true;
 
         if (DEBUG)
             Serial.println("> play musica");
@@ -259,6 +269,7 @@ void execute(Command command)
     case CODE_PAUSE:
     {
         mp3.pause();
+        status.musicPlaying = false;
 
         if (DEBUG)
             Serial.println("> pausa musica");
@@ -289,7 +300,8 @@ void execute(Command command)
         break;
     }
     case CODE_MOVE:
-    { // In data[0] è contenuta la potenza da dare al motore DX
+    { 
+        // In data[0] è contenuta la potenza da dare al motore DX
         // In data[1] quella per il motore SX
         move(data[0], data[1]);
         break;
@@ -312,8 +324,8 @@ void execute(Command command)
         {
             sendCommand(Command::makeCommand(CODE_LAUNCH_FAILURE));
         }
+        break;
     }
-    break;
     case CODE_EYES:
     {
         setEyes(data[0]);
@@ -321,12 +333,21 @@ void execute(Command command)
     }
     case CODE_CONNECTED:
     {
+        status.connected = true;
+
         if (DEBUG)
             Serial.println("> Qualcuno si è connesso");
         break;
     }
     case CODE_DISCONNECTED:
     {
+        status.connected = false;
+        stopMotor();
+        setEyes(OFF);
+        mp3.pause();
+        status.musicPlaying = true;
+        closeLid();
+
         if (DEBUG)
             Serial.println("> Qualcuno si è disconnesso");
         break;
@@ -395,8 +416,12 @@ void move(uint8_t potDx, uint8_t potSx)
     status.motorSx = potSx;
     motorTimeout = millis();
 
-    if (DEBUG)
-        Serial.println(potDx);
+    if (DEBUG) {
+        Serial.print("> motori: ");
+        Serial.print(potDx, HEX);
+        Serial.print(" - ");
+        Serial.println(potSx, HEX);
+    }
 }
 
 void stopMotor()
@@ -414,18 +439,18 @@ boolean shoot(uint8_t which)
         return false;
 
     digitalWrite(PIN_RAZZI[which], HIGH);
+    
+    status.rockets |= (1 << which);
+    rocketsTimeout[which] = millis();
+
     if (DEBUG)
     {
         Serial.print("> Accendendo canna ");
         Serial.println(which, DEC);
+        Serial.print("> Stato rockets: ");
+        Serial.println(status.rockets, BIN);
     }
-
-    delay(CANNA_ACCESA_DELAY);
-    digitalWrite(PIN_RAZZI[which], LOW);
     return true;
-
-    if (DEBUG)
-        Serial.println("> Spegnendo canna");
 }
 
 void setEyes(boolean lit)
