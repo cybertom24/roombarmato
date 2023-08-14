@@ -9,10 +9,10 @@
 #define SSID                "Roombarmato"
 #define PASSWORD            "e1m1-2077"
 #define PORT                4000
-#define SERIAL_BAUD_RATE    57600
+#define SERIAL_BAUD_RATE    38400
 #define COMMAND_HOLDER_SIZE 64
 #define MESSAGE_LENGTH      (COMMAND_SIZE)
-#define TIMEOUT_SERIAL      1000
+#define TIMEOUT_SERIAL      10
 #define ECC_SIZE            4
 
 /* FUNZIONI */
@@ -38,7 +38,7 @@ boolean arduinoReady = false;
 unsigned long timeout = 0;
 boolean timeoutActive = false;
 
-SecureSerialHW sserial;
+SecureSerialHW::SSHW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> sserial;
 
 void setup()
 {
@@ -174,5 +174,5 @@ void sendCommandTCP(Command command)
 
 void sendCommandSerial(Command command)
 {
-    Serial.write(command.buffer, COMMAND_SIZE);
+    sserial.sendPacket(command.buffer, COMMAND_SIZE);
 }

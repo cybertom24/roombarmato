@@ -19,12 +19,14 @@
 #include <SoftwareSerial.h>
 #include <Servo.h>
 #include <string.h>
+#include <SecureSerialSW.h>
 
 /* COSTANTI */
-#define DEBUG true
+#define DEBUG false
 #define SUPER false
+uint8_t expected[] = {0x00, 0xFF, 0xEA, 0xAE, 0x3C, 0xC3};
 
-#define ON HIGH
+#define ON  HIGH
 #define OFF LOW
 // Definizione dei pin utilizzati e delle loro funzioni
 // "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_ESP" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'ESP
@@ -36,10 +38,10 @@
 // Motori
 #define PIN_MOTORE_DX 11
 #define PIN_MOTORE_SX 5
-#define PIN_DX_DIR1 10
-#define PIN_DX_DIR2 12
-#define PIN_SX_DIR1 8
-#define PIN_SX_DIR2 7
+#define PIN_DX_DIR1   10
+#define PIN_DX_DIR2   12
+#define PIN_SX_DIR1   8
+#define PIN_SX_DIR2   7
 // Servo
 #define PIN_SERVO_DX 6
 // Razzi
@@ -51,9 +53,12 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 // Altri pin
 #define PIN_FINECORSA A4
 #define PIN_LED_OCCHI A5
-#define PIN_CHK_VBAT A6
+#define PIN_CHK_VBAT  A6
 // Varie
-#define ESP_BAUD_RATE           115200
+#define ESP_BAUD_RATE           38400
+#define MESSAGE_LENGTH          (COMMAND_SIZE)
+#define TIMEOUT_SERIAL          10
+#define ECC_SIZE                4
 #define SERIAL_BAUD_RATE        9600
 #define TIMEOUT_ESP_SERIAL      200
 #define MIN_VBAT                43
@@ -65,30 +70,29 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define MOTOR_DELAY_AUTO_OFF    3000
 
 /* FUNZIONI */
-void execute(Command command);
-int checkBattery();
-void openLid();
-void closeLid();
+void    execute(Command command);
+int     checkBattery();
+void    openLid();
+void    closeLid();
 boolean isOpen();
 boolean batteryLow();
-void sendCommand(Command command);
+void    sendCommand(Command command);
 boolean shoot(uint8_t which);
-void setEyes(boolean status);
-void move(uint8_t potDx, uint8_t potSx);
-void stopMotor();
+void    setEyes(boolean status);
+void    move(uint8_t potDx, uint8_t potSx);
+void    stopMotor();
 
-// Creazione dei due oggetti per il controllo delle due schede
-SoftwareSerial esp(MY_RX_ESP, MY_TX_ESP);
-MP3Serial mp3;
-
-Servo servoDx;
+/* VARIABILI */
+// Oggetti
+SoftwareSerial espSerial(MY_RX_ESP, MY_TX_ESP);
+MP3Serial      mp3;
+SecureSerialSW::SSSW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
+Servo          servoDx;
 
 // Timeout
-unsigned long espTimeout = 0;
 unsigned long batteryLowTimeout = 0;
 unsigned long motorTimeout = 0;
 unsigned long readyCommandTimeout = 0;
-boolean espTimeoutActive = false;
 
 boolean readyCommandSent = false;
 
@@ -104,12 +108,12 @@ void setup()
 {
     pinMode(PIN_MOTORE_DX, OUTPUT);
     pinMode(PIN_MOTORE_SX, OUTPUT);
-    pinMode(PIN_DX_DIR1, OUTPUT);
-    pinMode(PIN_DX_DIR2, OUTPUT);
-    pinMode(PIN_SX_DIR1, OUTPUT);
-    pinMode(PIN_SX_DIR2, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(PIN_CHK_VBAT, INPUT);
+    pinMode(PIN_DX_DIR1,   OUTPUT);
+    pinMode(PIN_DX_DIR2,   OUTPUT);
+    pinMode(PIN_SX_DIR1,   OUTPUT);
+    pinMode(PIN_SX_DIR2,   OUTPUT);
+    pinMode(LED_BUILTIN,   OUTPUT);
+    pinMode(PIN_CHK_VBAT,  INPUT);
     pinMode(PIN_FINECORSA, INPUT);
     for (int pin : PIN_RAZZI)
     {
@@ -118,17 +122,19 @@ void setup()
     }
 
     // Inizializzazione delle 2 seriali, quella per l'esp (esp) e quella per l'mp3 (mp3)
-    esp.begin(ESP_BAUD_RATE);
+    esp.begin(&espSerial, ESP_BAUD_RATE);
 
-    if (DEBUG)
+    Serial.begin(ESP_BAUD_RATE);
+
+    /* if (DEBUG)
         Serial.begin(ESP_BAUD_RATE);
     else
         mp3.begin();
-
+ */
     // Indica ad arduino che la seriale su cui bisogna concentrarsi ad ascoltare è quella per l'esp
     // Quella per l'mp3 verrà ignorata in caso di dati in arrivo
     // (non è un problema visto che non arriveranno mai dati)
-    esp.listen();
+    espSerial.listen();
 
     servoDx.attach(PIN_SERVO_DX);
     closeLid();
@@ -158,72 +164,76 @@ void loop()
     }
 
     // Invia il messaggio SYNC quando si è pronti o è passato troppo tempo da una risposta
-    if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
+    /* if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
     {
         //if (DEBUG) Serial.println("> Invio comando di SYNC");
 
         sendCommand(Command::makeCommand(CODE_SYNC));
         readyCommandSent = true;
         readyCommandTimeout = millis();
-    }
+    } */
 
-    if (esp.available() >= COMMAND_SIZE)
+    if (esp.available() > 0)
     {
         readyCommandSent = false;
-        espTimeoutActive = OFF;
 
-        uint8_t bufferIn[COMMAND_SIZE];
-        esp.readBytes(bufferIn, COMMAND_SIZE);
-        Command c(bufferIn);
+        uint8_t packet[COMMAND_SIZE];
 
-        if (DEBUG && SUPER)
+        if (esp.getPacket(packet))
         {
-            Serial.print("> Arrivato:");
-            for (int i = 0; i < COMMAND_SIZE; i++)
-            {
-                Serial.print(" ");
-                Serial.print(bufferIn[i], HEX);
+            // Non ci sono errori nel pacchetto
+            
+            boolean right = true;
+            for(int i = 0; i < COMMAND_SIZE; i++) {
+                if(packet[i] != expected[i]) {
+                    right = false;
+                    break;
+                }
             }
-            Serial.println();
-        }
 
-        if (c.isRight())
-            execute(c);
+            if(right)
+                Serial.println("0");
+            else
+                Serial.println("1");
+            
+            Command c(packet);
+
+            if (DEBUG)
+            {
+                if (SUPER)
+                {
+                    Serial.print("> Arrivato:");
+                    for (int i = 0; i < COMMAND_SIZE; i++)
+                    {
+                        Serial.print(" ");
+                        Serial.print(packet[i], HEX);
+                    }
+                    Serial.println();
+                }
+            }
+
+            if (c.isRight())
+                execute(c);
+        }
+        else
+        {
+            // Il pacchetto contiene errori. Non può essere assolutamente considerato
+            Serial.println("1");
+        }
     }
 
     // Se non sono arrivati messaggi per il controllo dei motori entro tot secondi fermali
     if (status.motorDx > 1 && status.motorSx > 1 && millis() >= motorTimeout + MOTOR_DELAY_AUTO_OFF)
         stopMotor();
 
-    // Blocco di codice che ripulisce la seriale con l'esp in caso ci siano dei dati che non sono compatibili con i comandi
-    if (esp.available() % COMMAND_SIZE != 0)
-    {
-        // Se c'è qualcosa nel buffer ma non è del numero giusto per essere letto
-        if (!espTimeoutActive)
-        {
-            // Fai partire il espTimeout se non è ancora partito
-            espTimeout = millis();
-            espTimeoutActive = ON;
-        }
-        else if (millis() >= espTimeout + TIMEOUT_ESP_SERIAL)
-        {
-            // Se è scaduto il espTimeout ripulisci la seriale
-            uint8_t garbage[esp.available()];
-            esp.readBytes(garbage, esp.available());
-            // E blocca il espTimeout
-            espTimeoutActive = OFF;
-
-            if (DEBUG) Serial.println("> Seriale ripulita");
-        }
-
-        readyCommandSent = false;
-    }
+    esp.handleCleaness();
 }
 
 void execute(Command command)
 {
 
-    if (DEBUG && SUPER) Serial.println("> Eseguendo comando");
+    if (DEBUG && SUPER)
+        Serial.println("> Eseguendo comando");
 
     uint8_t data[command.size()];
     command.data(data);
@@ -361,7 +371,7 @@ boolean batteryLow()
 
 void sendCommand(Command command)
 {
-    esp.write(command.buffer, COMMAND_SIZE);
+    esp.sendPacket(command.buffer, COMMAND_SIZE);
 }
 
 void move(uint8_t potDx, uint8_t potSx)
@@ -385,7 +395,8 @@ void move(uint8_t potDx, uint8_t potSx)
     status.motorSx = potSx;
     motorTimeout = millis();
 
-    if (DEBUG) Serial.println(potDx);
+    if (DEBUG)
+        Serial.println(potDx);
 }
 
 void stopMotor()
