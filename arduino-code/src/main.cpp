@@ -200,16 +200,18 @@ void loop()
 
             if (c.isRight())
                 execute(c);
+            else
+                sendCommand(Command::makeCommand(CODE_WRONG_PACKET));
         }
         else
         {
             // Il pacchetto contiene errori. Non può essere assolutamente considerato
-            
+            sendCommand(Command::makeCommand(CODE_WRONG_PACKET));
         }
     }
 
     // Se non sono arrivati messaggi per il controllo dei motori entro tot secondi fermali
-    if (status.motorDx > 1 && status.motorSx > 1 && millis() >= motorTimeout + MOTOR_DELAY_AUTO_OFF)
+    if ((status.motorDx > 1 || status.motorSx > 1) && millis() >= motorTimeout + MOTOR_DELAY_AUTO_OFF)
         stopMotor();
 
     // Spegni le canne se è passato abbastanza tempo
@@ -350,6 +352,25 @@ void execute(Command command)
 
         if (DEBUG)
             Serial.println("> Qualcuno si è disconnesso");
+        break;
+    }
+    case CODE_CHECK_BATTERY:
+    {
+        sendCommand(Command::makeCommand(CODE_BATTERY_STATUS, checkBattery()));
+        break;
+    }
+    case CODE_CHECK_LID:
+    {
+        uint8_t lidStatus = 0;
+        if(isOpen())
+            lidStatus = 1;
+        
+        sendCommand(Command::makeCommand(CODE_LID_STATUS, lidStatus));
+        break;
+    }
+    case CODE_CHECK_CONNECTION:
+    {
+        sendCommand(Command::makeCommand(CODE_CONNECTION_OK));
         break;
     }
     }

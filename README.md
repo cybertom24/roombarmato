@@ -31,12 +31,12 @@ A repo to make a military version of the robotic vacuum cleaner Roomba
 - (OK) Spegni tutto con disconnessione
 - (OK) Accendi/Spegni occhi
 - (OK) Controllo musica
-- Controllo livello batteria
-- Invio errore di lancio (perchè coperchio chiuso)
+- (OK) Controllo livello batteria
+- (OK) Invio errore di lancio (perchè coperchio chiuso)
 - (OK) Invio errore troppi messaggi
 - Messaggio multiplo per accensione canne
-- Invio stato batteria
-- Invio stato coperchio
+- (OK) Invio stato batteria
+- (OK) Invio stato coperchio
 
 ### ESP code
 

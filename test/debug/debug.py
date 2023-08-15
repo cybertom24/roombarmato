@@ -8,14 +8,14 @@ from time import sleep
 ADDRESS = "192.168.4.1"
 PORT = 4000
 BUFFER_SIZE = 1024
-millis = 10
-duration = 1000
+millis = 100
+duration = 100
 
 # Funzioni
 def get_command_from_console():
     message = input("code, data0, data1: ")
     list = message.split(",")
-    print(list)
+    # print(list)
     if len(list) == 0:
         return None
     code = int(list[0])
@@ -34,10 +34,21 @@ def get_command_from_console():
 def listen(sck):
     while True:
         data = sck.recv(BUFFER_SIZE)
-        print("Ricevuto:", data)
+        print("\n> Ricevuto:", list(data))
 
-def sendCommand(command, sck):
+def send_command(command, sck):
     sck.send(bytes(command))
+
+def spam_test():
+    # Proviamo a riempire l'holder
+    print("spam test:", millis, " ms between messages")
+    i = duration
+    while i > 0:
+        send_command((command.START_BYTE, 9, 2, i, 100, command.END_BYTE), sck)
+        # send_command((0x69, 0x09, 0x02, 0xC2, 0xC2, 0xFA), sck)
+        i -= 1
+        sleep(millis / 1000)
+
 
 # ----------------------------------------------------------------
 # Inizio script:
@@ -50,21 +61,11 @@ listen_thread = threading.Thread(target=listen, args=(sck,))
 listen_thread.daemon = True
 listen_thread.start()
 
-"""
-# Proviamo a riempire l'holder
-print("spam test:", millis, " ms between messages")
-i = duration
-while i > 0:
-    # sendCommand((command.START_BYTE, 9, 2, i, 100, command.END_BYTE), sck)
-    sendCommand((0x00, 0xFF, 0xEA, 0xAE, 0x3C, 0xC3), sck)
-    i -= 1
-    sleep(millis / 1000)
-"""
-
 while 1:
+    # spam_test()
     newCommand = get_command_from_console()
     print(newCommand)
-    sendCommand(newCommand, sck)
+    send_command(newCommand, sck)
     # print("> new command\ncode =", newCommand[], "\ndata0 =", data0, "\ndata1 =", data1)
 
 # Chiusura

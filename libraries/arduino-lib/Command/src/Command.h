@@ -33,8 +33,10 @@
 // Checks
 #define CODE_CHECK_CONNECTION 0x16
 #define CODE_CONNECTION_OK    0x17
-#define CODE_CKECK_BATTERY    0x0F
+#define CODE_CHECK_BATTERY    0x0F
 #define CODE_BATTERY_STATUS   0x10
+#define CODE_CHECK_LID        0x11
+#define CODE_LID_STATUS       0x12
 // ESP
 #define CODE_SYNC             0x18
 #define CODE_CONNECTED        0x14
@@ -43,6 +45,7 @@
 #define CODE_LAUNCH_FAILURE   0xC8
 #define CODE_BATTERY_LOW      0xC9
 #define CODE_HOLDER_FULL      0xCA
+#define CODE_WRONG_PACKET     0xCB
 // Utility
 #define CODE_NOT_FOUND        0xFF
 
