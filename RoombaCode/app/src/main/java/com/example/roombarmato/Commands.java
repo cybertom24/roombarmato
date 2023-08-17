@@ -5,6 +5,7 @@ public class Commands {
     static final byte END_BYTE = (byte) 0xFA;
     static final byte SIZE = 0x06;
     static final byte OPEN = 0x0A;
+    static final byte CHECK_CONNECTION = 0x16;
     static final byte CLOSE = 0x0B;
     // MP3
     static final byte PLAY = 0x00;
@@ -21,7 +22,7 @@ public class Commands {
     // Movement
     static final byte MOVE = 0x09;
     // Fire
-    static final byte FIRE = 0x0A;
+    static final byte FIRE = 0x0C;
     static final byte REQUEST_STATUS_ROCKETS = 0x0B;
     static final byte STATUS_ROCKETS = 0x0C;
     // Connection

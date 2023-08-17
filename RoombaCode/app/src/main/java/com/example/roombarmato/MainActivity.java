@@ -54,9 +54,12 @@ import java.util.TimerTask;
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class MainActivity extends AppCompatActivity {
-    int loopInt=200;
+    int loopInt=100;
+    final int delay = 500; // 1000 milliseconds == 1 second
+
     //CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
     TcpClient2 myTcpClient2 = new TcpClient2("192.168.4.1", 4000);
+    RiceviMessaggi riceviMsg;
     // Objects
     Indicator rocketsIndicator;
     Button openButton;
@@ -64,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
     Button rocketBtn2;
     Button rocketBtn3;
     Button rocketBtn4;
+
+    boolean isRck1=false;
+    boolean isRck2=false;
+    boolean isRck3=false;
+    boolean isRck4=false;
+
+    boolean ischargeRck1=true;
+    boolean ischargeRck2=true;
+    boolean ischargeRck3=true;
+    boolean ischargeRck4=true;
+
+
     boolean isOpen = false;
 
 
@@ -72,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     TextView terminalView;
     String terminalText = "";
     EditText terminalEdit;
-    Button playButton, muteButton, nextButton, previousButton, switchMainBtn, addButton;
+    Button playButton, muteButton, nextButton, previousButton, switchMainBtn, addButton, fireButton;
 
     Slider slider;
     Spinner songsSpinner;
@@ -114,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         spFileEditor = spFile.edit();
 
         sendBuffer = new ArrayList<>();
+
 
         basicConfiguration(); //qui imposto la configurazione base dei vari View e imposto i loro listener
 
@@ -170,6 +186,34 @@ public class MainActivity extends AppCompatActivity {
         rocketBtn3 = findViewById(R.id.rocketButton1);
         rocketBtn4 = findViewById(R.id.rocketButton3);
         openButton = findViewById(R.id.open_button);
+        fireButton= findViewById(R.id.fire_button);
+
+        fireButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isRck1 && ischargeRck1){
+                    myTcpClient2.send(Commands.makeCommand(Commands.FIRE,0));
+                    rocketBtn1.setBackgroundResource(R.drawable.rocket_button_usata);
+                    ischargeRck1=false;
+                }
+                if (isRck2 && ischargeRck2){
+                    myTcpClient2.send(Commands.makeCommand(Commands.FIRE,1));
+                    rocketBtn2.setBackgroundResource(R.drawable.rocket_button_usata);
+                    ischargeRck2=false;
+                }
+                if (isRck3 && ischargeRck3){
+                    myTcpClient2.send(Commands.makeCommand(Commands.FIRE,2));
+                    rocketBtn3.setBackgroundResource(R.drawable.rocket_button_usata);
+                    ischargeRck3=false;
+                }
+                if (isRck4 && ischargeRck4){
+                    myTcpClient2.send(Commands.makeCommand(Commands.FIRE,3));
+                    rocketBtn4.setBackgroundResource(R.drawable.rocket_button_usata);
+                    ischargeRck4=false;
+                }
+            }
+        });
 
         openButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final Handler handler = new Handler();
-        final int delay = 500; // 1000 milliseconds == 1 second
 
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -197,27 +240,69 @@ public class MainActivity extends AppCompatActivity {
         rocketBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn1.setBackgroundResource(R.drawable.rocket_button_usata);
+                isRck1=false;
+                isRck2=false;
+                isRck3=false;
+                isRck4=false;
+                isRck1=true;
+                if (ischargeRck2) rocketBtn2.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck3) rocketBtn3.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck4) rocketBtn4.setBackgroundResource(R.drawable.rockt_button_libero);
+
+
+                if (ischargeRck1) rocketBtn1.setBackgroundResource(R.drawable.rocket_selezionato);
             }
         });
         rocketBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn2.setBackgroundResource(R.drawable.rocket_button_usata);
+                isRck1=false;
+                isRck2=false;
+                isRck3=false;
+                isRck4=false;
+                isRck2=true;
+
+                if (ischargeRck1) rocketBtn1.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck3) rocketBtn3.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck4) rocketBtn4.setBackgroundResource(R.drawable.rockt_button_libero);
+
+                if (ischargeRck2) rocketBtn2.setBackgroundResource(R.drawable.rocket_selezionato);
             }
         });
         rocketBtn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn3.setBackgroundResource(R.drawable.rocket_button_usata);
+                isRck1=false;
+                isRck2=false;
+                isRck3=false;
+                isRck4=false;
+                isRck3=true;
+
+                if (ischargeRck2) rocketBtn2.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck1) rocketBtn1.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck4) rocketBtn4.setBackgroundResource(R.drawable.rockt_button_libero);
+
+                if (ischargeRck3) rocketBtn3.setBackgroundResource(R.drawable.rocket_selezionato);
             }
         });
         rocketBtn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rocketBtn4.setBackgroundResource(R.drawable.rocket_button_usata);
+                isRck1=false;
+                isRck2=false;
+                isRck3=false;
+                isRck4=false;
+                isRck4=true;
+
+                if (ischargeRck2) rocketBtn2.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck3) rocketBtn3.setBackgroundResource(R.drawable.rockt_button_libero);
+                if (ischargeRck1) rocketBtn1.setBackgroundResource(R.drawable.rockt_button_libero);
+
+                if (ischargeRck4) rocketBtn4.setBackgroundResource(R.drawable.rocket_selezionato);
             }
         });
+
+
 
 
         menuButton.setOnClickListener(new View.OnClickListener() {
@@ -247,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 myTcpClient2.connect();
-                                myTcpClient2.send("RIPROVA COL 2".getBytes());
+                                //myTcpClient2.send("RIPROVA COL 2".getBytes());
 
                                 break;
 
@@ -267,6 +352,12 @@ public class MainActivity extends AppCompatActivity {
                                 rocketBtn2.setBackgroundResource(R.drawable.rockt_button_libero);
                                 rocketBtn3.setBackgroundResource(R.drawable.rockt_button_libero);
                                 rocketBtn4.setBackgroundResource(R.drawable.rockt_button_libero);
+                                 ischargeRck1=true;
+                                 ischargeRck2=true;
+                                 ischargeRck3=true;
+                                 ischargeRck4=true;
+
+
 
 
                                 break;
@@ -277,7 +368,9 @@ public class MainActivity extends AppCompatActivity {
                                         clearTerminal();
                                         break;*/
                             case R.id.menu_information://informazioni
+
                                 Toast.makeText(MainActivity.this, "PROVA", Toast.LENGTH_SHORT).show();
+                                myTcpClient2.send(Commands.makeCommand(Commands.CHECK_CONNECTION));
                                 break;
                                     /*case R.id.menu_download:
                                         // Create the txt file and save it
@@ -787,6 +880,9 @@ public class MainActivity extends AppCompatActivity {
 
         return makeCommand(Commands.MOVE, datoDx, datoSx);
     }
+
+
+
 
 // IMPORTANTE: ricordarsi della questione dei messaggi importanti!!!
 // Serve se abbiamo il problema dell'accumulo di messaggi
