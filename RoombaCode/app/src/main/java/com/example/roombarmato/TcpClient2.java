@@ -1,8 +1,11 @@
 package com.example.roombarmato;
 
 import android.os.AsyncTask;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class TcpClient2 {
@@ -11,6 +14,7 @@ public class TcpClient2 {
     private int serverPort;
     private Socket clientSocket;
     private DataOutputStream outputStream;
+    BufferedReader inputStream;
 
     public TcpClient2(String serverIp, int serverPort) {
         this.serverIp = serverIp;
@@ -27,6 +31,9 @@ public class TcpClient2 {
         new SendTask().execute(message);
     }
 
+
+
+
     // Metodo per chiudere la connessione con il server
     public void disconnect() throws IOException {
         if (clientSocket != null) {
@@ -41,6 +48,7 @@ public class TcpClient2 {
             try {
                 clientSocket = new Socket(serverIp, serverPort);
                 outputStream = new DataOutputStream(clientSocket.getOutputStream());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -56,6 +64,7 @@ public class TcpClient2 {
                 if (clientSocket == null || outputStream == null) {
                     throw new IOException("La connessione con il server non è stata stabilita.");
                 }
+
 
                 byte[] message = messages[0];
                 outputStream.write(message);
