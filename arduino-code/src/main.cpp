@@ -42,7 +42,7 @@
 #define PIN_SX_DIR1   8
 #define PIN_SX_DIR2   7
 // Servo
-#define PIN_SERVO_DX 6
+#define PIN_SERVO     6
 // Razzi
 #define PIN_RAZZO_0 A0
 #define PIN_RAZZO_1 A1
@@ -59,7 +59,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define TIMEOUT_SERIAL          10
 #define ECC_SIZE                4
 #define SERIAL_BAUD_RATE        9600
-#define TIMEOUT_ESP_SERIAL      200
+#define TIMEOUT_ESP_SERIAL      20
 #define MIN_VBAT                43
 #define MAX_VBAT                229
 #define CLOSED_LID_ANGLE        5
@@ -83,16 +83,25 @@ void    stopMotor();
 
 /* VARIABILI */
 // Oggetti
-SoftwareSerial espSerial(MY_RX_ESP, MY_TX_ESP);
+SoftwareSerial  espSerial(MY_RX_ESP, MY_TX_ESP);
 MP3Serial      mp3;
 SecureSerialSW::SSSW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
-Servo          servoDx;
+Servo    servo;
 
 // Timeout
 unsigned long batteryLowTimeout   = 0;
 unsigned long motorTimeout        = 0;
 unsigned long readyCommandTimeout = 0;
 unsigned long rocketsTimeout[4]   = { 0 };
+
+// Metrics
+unsigned long lastMicros = 0;
+struct LoopTime {
+    unsigned long max = 0;
+    unsigned long min = INT32_MAX;
+    unsigned long tot = 0;
+    unsigned long takes = 0;
+} loopTime;
 
 boolean readyCommandSent = false;
 
@@ -136,7 +145,7 @@ void setup()
     // (non è un problema visto che non arriveranno mai dati)
     espSerial.listen();
 
-    servoDx.attach(PIN_SERVO_DX);
+    servo.attach(PIN_SERVO);
     closeLid();
     stopMotor();
     setEyes(OFF);
@@ -147,6 +156,8 @@ void setup()
 
 void loop()
 {
+    lastMicros = micros();
+
     // Controlla che il valore della batteria sia accettabile
     if (batteryLow())
     {
@@ -168,7 +179,14 @@ void loop()
     {
         //if (DEBUG) Serial.println("> Invio comando di SYNC");
 
-        sendCommand(Command::makeCommand(CODE_SYNC));
+        /* Serial.print("max: ");
+        Serial.println(loopTime.max, DEC);
+        Serial.print("min: ");
+        Serial.println(loopTime.min, DEC);
+        Serial.print("mid: ");
+        Serial.println(loopTime.tot / loopTime.takes, DEC); */
+
+        // sendCommand(Command::makeCommand(CODE_SYNC));
         readyCommandSent = true;
         readyCommandTimeout = millis();
     }
@@ -238,6 +256,15 @@ void loop()
     }
 
     esp.handleCleaness();
+
+    // Controllo della durata
+    unsigned long dur = micros() - lastMicros;
+    if (loopTime.max < dur)
+        loopTime.max = dur;
+    if (loopTime.min > dur)
+        loopTime.min = dur;
+    loopTime.takes++;
+    loopTime.tot += dur;
 }
 
 void execute(Command command)
@@ -384,7 +411,7 @@ int checkBattery()
 
 void openLid()
 {
-    servoDx.write(OPENED_LID_ANGLE);
+    servo.write(OPENED_LID_ANGLE);
     status.lidOpen = true;
 
     if (DEBUG)
@@ -393,7 +420,7 @@ void openLid()
 
 void closeLid()
 {
-    servoDx.write(CLOSED_LID_ANGLE);
+    servo.write(CLOSED_LID_ANGLE);
     status.lidOpen = false;
 
     if (DEBUG)

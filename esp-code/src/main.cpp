@@ -76,13 +76,13 @@ void loop()
             handleSerialPacket();
 
         // Se arduino è pronto a ricevere invia il prossimo comando disponibile
-        if (arduinoReady && commandsToBeRead > 0)
+        /* if (arduinoReady && commandsToBeRead > 0)
         {
             uint8_t command[COMMAND_SIZE];
             retrieveCommand(command);
             sserial.sendPacket(command, COMMAND_SIZE);
             arduinoReady = false;
-        }
+        } */
 
         sserial.handleCleaness();
     }
@@ -113,11 +113,13 @@ void handleTCPpacket()
     uint8_t packet[COMMAND_SIZE];
     tcp.readBytes(packet, COMMAND_SIZE);
     // Salvalo nel command holder
-    if (commandsToBeRead == COMMAND_HOLDER_SIZE)
+    /* if (commandsToBeRead == COMMAND_HOLDER_SIZE)
         sendCommandTCP(Command::makeCommand(CODE_HOLDER_FULL));
     else
         holdCommand(packet);
+    */
 
+    sserial.sendPacket(packet, COMMAND_SIZE);
     turnOnLed();
 }
 
