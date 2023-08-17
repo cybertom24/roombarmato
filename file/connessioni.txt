@@ -1,0 +1,8 @@
+Motori:
+Sch - Mod
+RD2	> IN1			
+RD1 > ENA
+RP	> IN2
+LP	> ENB	
+LD1 > IN3
+LD2	> IN4

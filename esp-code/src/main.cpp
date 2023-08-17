@@ -13,6 +13,7 @@
 #define COMMAND_HOLDER_SIZE 64
 #define MESSAGE_LENGTH      (COMMAND_SIZE)
 #define TIMEOUT_SERIAL      10
+#define TIMEOUT_TCP         10
 #define ECC_SIZE            4
 
 /* FUNZIONI */
@@ -85,6 +86,25 @@ void loop()
         } */
 
         sserial.handleCleaness();
+
+        if (tcp.available() % COMMAND_SIZE != 0)
+        {
+            if (!timeoutActive)
+            {
+                timeoutActive = true;
+                timeout = millis();
+            }
+            
+            if (millis() > timeout + TIMEOUT_SERIAL)
+            {
+                // Ripulisci
+                size_t size = tcp.available();
+                uint8_t garbage[size];
+                tcp.readBytes(garbage, size);
+                // Ferma il timeout
+                timeoutActive = false;
+            }
+        }
     }
 
     sendCommandSerial(Command::makeCommand(CODE_DISCONNECTED));
@@ -110,6 +130,7 @@ void handleTCPpacket()
 {
     turnOffLed();
 
+    timeoutActive = false;
     uint8_t packet[COMMAND_SIZE];
     tcp.readBytes(packet, COMMAND_SIZE);
     // Salvalo nel command holder

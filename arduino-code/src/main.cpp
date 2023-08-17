@@ -22,7 +22,7 @@
 #include <SecureSerialSW.h>
 
 /* COSTANTI */
-#define DEBUG true
+#define DEBUG false
 #define SUPER false
 
 #define ON  HIGH
@@ -32,8 +32,6 @@
 #define MY_RX_ESP 2
 #define MY_TX_ESP 3
 // Per l'MP3 si usa la seriale di default
-// #define MY_RX_MP3 4
-// #define MY_TX_MP3 5
 // Motori
 #define PIN_MOTORE_DX 11
 #define PIN_MOTORE_SX 5
@@ -59,9 +57,9 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define TIMEOUT_SERIAL          10
 #define ECC_SIZE                4
 #define SERIAL_BAUD_RATE        9600
-#define TIMEOUT_ESP_SERIAL      20
-#define MIN_VBAT                43
-#define MAX_VBAT                229
+#define TIMEOUT_ESP_SERIAL      500
+#define MIN_VBAT                790
+#define MAX_VBAT                980
 #define CLOSED_LID_ANGLE        5
 #define OPENED_LID_ANGLE        65
 #define BATTERY_LOW_DELAY_ERROR 2000
@@ -80,13 +78,15 @@ boolean shoot(uint8_t which);
 void    setEyes(boolean status);
 void    move(uint8_t potDx, uint8_t potSx);
 void    stopMotor();
+void    blocca();
+
 
 /* VARIABILI */
 // Oggetti
-SoftwareSerial  espSerial(MY_RX_ESP, MY_TX_ESP);
+SoftwareSerial espSerial(MY_RX_ESP, MY_TX_ESP);
 MP3Serial      mp3;
 SecureSerialSW::SSSW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
-Servo    servo;
+Servo          servo;
 
 // Timeout
 unsigned long batteryLowTimeout   = 0;
@@ -146,9 +146,8 @@ void setup()
     espSerial.listen();
 
     servo.attach(PIN_SERVO);
-    closeLid();
-    stopMotor();
-    setEyes(OFF);
+    
+    blocca();
 
     if (DEBUG)
         Serial.println("> Setup finito");
@@ -167,10 +166,9 @@ void loop()
         {
             sendCommand(Command::makeCommand(CODE_BATTERY_LOW));
             batteryLowTimeout = millis();
+            blocca();
         }
         // Interrompi qualsiasi tipo di azione e spegni gli occhi
-        stopMotor();
-        setEyes(OFF);
         return;
     }
 
@@ -186,7 +184,7 @@ void loop()
         Serial.print("mid: ");
         Serial.println(loopTime.tot / loopTime.takes, DEC); */
 
-        // sendCommand(Command::makeCommand(CODE_SYNC));
+        // sendCommand(Command::makeCommand(CODE_CONNECTION_OK));
         readyCommandSent = true;
         readyCommandTimeout = millis();
     }
@@ -371,11 +369,7 @@ void execute(Command command)
     case CODE_DISCONNECTED:
     {
         status.connected = false;
-        stopMotor();
-        setEyes(OFF);
-        mp3.pause();
-        status.musicPlaying = true;
-        closeLid();
+        blocca();
 
         if (DEBUG)
             Serial.println("> Qualcuno si è disconnesso");
@@ -451,11 +445,11 @@ void move(uint8_t potDx, uint8_t potSx)
     boolean dirDx = potDx & 0x01,
             dirSx = potSx & 0x01;
     // Imposta la direzione del motore DX
-    digitalWrite(PIN_DX_DIR1, dirDx);
-    digitalWrite(PIN_DX_DIR2, !dirDx);
+    digitalWrite(PIN_DX_DIR1, !dirDx);
+    digitalWrite(PIN_DX_DIR2, dirDx);
     // Imposta la direzione del motore SX
-    digitalWrite(PIN_SX_DIR1, dirSx);
-    digitalWrite(PIN_SX_DIR2, !dirSx);
+    digitalWrite(PIN_SX_DIR1, !dirSx);
+    digitalWrite(PIN_SX_DIR2, dirSx);
     // Imposta la potenza data ai motori (0xFE = 11111110B -> rende sempre zero il LSB)
     analogWrite(PIN_MOTORE_DX, potDx & 0xFE);
     analogWrite(PIN_MOTORE_SX, potSx & 0xFE);
@@ -486,6 +480,10 @@ boolean shoot(uint8_t which)
     if (!isOpen())
         return false;
 
+    // Accendi solo una canna alla volta
+    if (status.rockets != 0)
+        return false;
+
     digitalWrite(PIN_RAZZI[which], HIGH);
     
     status.rockets |= (1 << which);
@@ -511,4 +509,13 @@ void setEyes(boolean lit)
         Serial.print("> Impostando occhi a ");
         Serial.println(lit, BIN);
     }
+}
+
+void blocca()
+{
+    stopMotor();
+    setEyes(OFF);
+    mp3.pause();
+    status.musicPlaying = false;
+    closeLid();
 }

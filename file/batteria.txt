@@ -1,0 +1,7 @@
+Batteria al piombo fla12-2.3 da 12V nominali
+Voltaggio: 11.8V a 14.4V
+
+analogRead da valori a 10bit -> da 0 a 1023
+
+11.8 -> 0%   -> 790
+14.4 -> 100% -> 980

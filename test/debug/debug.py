@@ -62,6 +62,7 @@ listen_thread.daemon = True
 listen_thread.start()
 
 while 1:
+    # sck.send(bytes([0, 0]))
     # spam_test()
     newCommand = get_command_from_console()
     print(newCommand)
