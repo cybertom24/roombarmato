@@ -53,13 +53,12 @@ import java.util.TimerTask;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RiceviMessaggi.MessageCallback {
     int loopInt=100;
     final int delay = 500; // 1000 milliseconds == 1 second
 
     //CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
-    TcpClient2 myTcpClient2 = new TcpClient2("192.168.4.1", 4000);
-    RiceviMessaggi riceviMsg;
+    TcpClient2 myTcpClient2 = new TcpClient2("10.0.2.2", 65435);
     // Objects
     Indicator rocketsIndicator;
     Button openButton;
@@ -129,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
         spFileEditor = spFile.edit();
 
         sendBuffer = new ArrayList<>();
+
+        //riceviMessaggiTask = new RiceviMessaggi("192.168.4.1", 4000, this);
+
 
 
         basicConfiguration(); //qui imposto la configurazione base dei vari View e imposto i loro listener
@@ -332,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 myTcpClient2.connect();
+                                //riceviMessaggiTask.execute();
                                 //myTcpClient2.send("RIPROVA COL 2".getBytes());
 
                                 break;
@@ -881,7 +884,10 @@ public class MainActivity extends AppCompatActivity {
         return makeCommand(Commands.MOVE, datoDx, datoSx);
     }
 
-
+    @Override
+    public void onMessageReceived(String message) {
+        Log.d("MESSAGGIO ROOMBAAA" ,message);
+    }
 
 
 // IMPORTANTE: ricordarsi della questione dei messaggi importanti!!!

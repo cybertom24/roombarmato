@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
@@ -32,16 +33,18 @@ public class RiceviMessaggi extends AsyncTask<Void, String, Void> {
         try {
             Socket socket = new Socket(serverAddress, serverPort);
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            InputStream in = socket.getInputStream();;
 
-            String message;
-            while ((message = in.readLine()) != null) {
-                publishProgress(message);
+            byte[] buffer = new byte[1024];
+
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1)  {
+                Log.d("Messaggio da roombaaaa", String.valueOf(bytesRead));
             }
 
             socket.close();
         } catch (IOException e) {
-            Log.e(TAG, "Errore durante la connessione o la ricezione dei messaggi", e);
+            Log.e(TAG, "Errore durante la connessione", e);
         }
 
         return null;
