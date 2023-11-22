@@ -1,5 +1,6 @@
 package com.example.roombarmato;
 
+import static com.example.roombarmato.Commands.FIRE;
 import static com.example.roombarmato.Commands.makeCommand;
 
 import android.annotation.SuppressLint;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
     final int delay = 500; // 1000 milliseconds == 1 second
 
     //CREO IL CLIENT DA FAR CONNETTERE AL ROOMBA
-    TcpClient2 myTcpClient2 = new TcpClient2("10.0.2.2", 65435);
+    TcpClient2 myTcpClient2 = new TcpClient2("192.168.4.1", 4000);
     // Objects
     Indicator rocketsIndicator;
     Button openButton;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
     JoystickView joystick;
     TextView terminalView;
     String terminalText = "";
+
+    int lastNotifiedProgress=0;
     EditText terminalEdit;
     Button playButton, muteButton, nextButton, previousButton, switchMainBtn, addButton, fireButton;
 
@@ -214,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
                     rocketBtn4.setBackgroundResource(R.drawable.rocket_button_usata);
                     ischargeRck4=false;
                 }
+
+
             }
         });
 
@@ -223,9 +228,12 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
                 if (!isOpen) {
                     myTcpClient2.send(makeCommand(Commands.OPEN));
                     isOpen = true;
+                    Log.d("TEST_OPEn", "funziona");
                 } else {
                     myTcpClient2.send(makeCommand(Commands.CLOSE));
                     isOpen = false;
+                    Log.d("TEST_OPEn", "funziona");
+
                 }
             }
         });
@@ -727,11 +735,15 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int newVolume = progress / 5;
-                newVolume *= 5;
-                if (newVolume != volume) {
-                    volume = newVolume;
-                    myTcpClient2.send(makeCommand(Commands.SET_VOLUME, volume));
+
+                if (Math.abs(progress - lastNotifiedProgress) >= 10) {
+                    int newVolume = progress / 5;
+                    newVolume *= 5;
+                    if (newVolume != volume) {
+                        volume = newVolume;
+                        myTcpClient2.send(makeCommand(Commands.SET_VOLUME, volume));
+                    }
+                    lastNotifiedProgress = progress;
                 }
             }
 
@@ -882,6 +894,22 @@ public class MainActivity extends AppCompatActivity implements RiceviMessaggi.Me
             datoSx = (byte) (datoSx & 0xFE);
 
         return makeCommand(Commands.MOVE, datoDx, datoSx);
+    }
+
+    public static int checkTrueBoolean(boolean bool1, boolean bool2, boolean bool3, boolean bool4) {
+        if (bool1) {
+            return 1;
+        } else if (bool2) {
+            return 2;
+        } else if (bool3) {
+            return 3;
+        } else if (bool4) {
+            return 4;
+        } else {
+            // Nel caso nessuna variabile sia vera, è possibile gestire questo caso come necessario.
+            // In questo esempio, restituiamo 0.
+            return 0;
+        }
     }
 
     @Override

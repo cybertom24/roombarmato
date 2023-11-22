@@ -27,12 +27,14 @@ public class TcpClient2 {
                 }
 
                 if(bytesRead > 0) {
-                    String receivedString = new String(received,0, bytesRead);
-
+                    //String receivedString = new String(received,0, bytesRead);
+                    String receivedString = bytesToString(received, bytesRead);
 
 
                     // elabora dati ricevuti
                     Log.d("DA PYTHON", receivedString);
+
+
 
 
 
@@ -61,8 +63,8 @@ public class TcpClient2 {
     public void connect() {
         new ConnectTask().execute();
 
-        ReceiveThread receiveThread = new ReceiveThread();
-        receiveThread.start();
+       ReceiveThread receiveThread = new ReceiveThread();
+       receiveThread.start();
     }
 
     // Metodo per inviare un messaggio al server in un thread separato
@@ -107,7 +109,7 @@ public class TcpClient2 {
                     throw new IOException("La connessione con il server non è stata stabilita.");
                 }
 
-                Log.d("MESSAGGIO DA ROOMBA ", "CIOOSODOFKWEOJKF");
+                Log.d("CHECK DI CONNESSIONE ", "FUNZIONA");
 
 
 
@@ -116,11 +118,8 @@ public class TcpClient2 {
                 outputStream.write(message);
                 outputStream.flush();
 
-                int bytesRead = receive(buffer);
+                //int bytesRead = receive(buffer);
 
-                if(bytesRead > 0) {
-                    // process received bytes
-                }
 
 
             } catch (IOException e) {
@@ -140,6 +139,18 @@ public class TcpClient2 {
         }
         else return 0;
 
+    }
+
+//convertiamo ciò che arriva in stringa così da porterlo vedere
+    private static String bytesToString(byte[] bytes, int n) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i=0;i<n;i++) {
+            byte b= bytes[i];
+            // Converte ciascun byte in una stringa e lo aggiunge al StringBuilder
+            stringBuilder.append(String.format("%02X", b));
+        }
+        return stringBuilder.toString();
     }
 
 
