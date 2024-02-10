@@ -11,3 +11,6 @@ Rapporto stechiometrico [g]: 2:1
 Rapporto ottimale [g]: 3:1
 Rapporto ottimale [mol]: 3:2
 Rapporto ottimale [cm^3]: 3:4
+
+aggiungere capocchia fiammifero rosso sullo scotch carta per far partire la miscela
+da aggiungere il nozzle al razzo

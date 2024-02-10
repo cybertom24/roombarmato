@@ -13,25 +13,24 @@
  *      angolo di apertura: 65
  */
 
+// Definisci DEBUG per attivare l'opzione
+// #define DEBUG
+
 /* LIBRERIE */
 #include "../../libraries/arduino-lib/Command/src/Command.h"
 #include <MP3Serial.h>
-#include <SoftwareSerial.h>
 #include <Servo.h>
 #include <string.h>
-#include <SecureSerialSW.h>
+#include <SecureSerialHW.h>
 
 /* COSTANTI */
-#define DEBUG false
-#define SUPER false
 
-#define ON  HIGH
-#define OFF LOW
 // Definizione dei pin utilizzati e delle loro funzioni
-// "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_ESP" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'ESP
-#define MY_RX_ESP 2
-#define MY_TX_ESP 3
-// Per l'MP3 si usa la seriale di default
+// "MY" sta dal punto di vista di Arduino, ovvero "MY_TX_MP3" vuol dire che fa da pin trasmettitore per arduino e quindi ricevente per l'MP3
+// Per l'MP3 si usa software serial
+#define MY_RX_MP3 2
+#define MY_TX_MP3 3
+
 // Motori
 #define PIN_MOTORE_DX 11
 #define PIN_MOTORE_SX 5
@@ -42,6 +41,7 @@
 // Servo
 #define PIN_SERVO     6
 // Razzi
+#define NUM_RAZZI   4
 #define PIN_RAZZO_0 A0
 #define PIN_RAZZO_1 A1
 #define PIN_RAZZO_2 A2
@@ -56,8 +56,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define MESSAGE_LENGTH          (COMMAND_SIZE)
 #define TIMEOUT_SERIAL          10
 #define ECC_SIZE                4
-#define SERIAL_BAUD_RATE        9600
-#define TIMEOUT_ESP_SERIAL      500
+#define TIMEOUT_ESP_SERIAL      20
 #define MIN_VBAT                790
 #define MAX_VBAT                980
 #define CLOSED_LID_ANGLE        5
@@ -79,20 +78,35 @@ void    setEyes(boolean status);
 void    move(uint8_t potDx, uint8_t potSx);
 void    stopMotor();
 void    blocca();
-
+void    updateServo();
 
 /* VARIABILI */
 // Oggetti
-SoftwareSerial espSerial(MY_RX_ESP, MY_TX_ESP);
-MP3Serial      mp3;
-SecureSerialSW::SSSW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
+MP3Serial      mp3(MY_RX_MP3, MY_TX_MP3);
+SecureSerialHW::SSHW<MESSAGE_LENGTH, ECC_SIZE, TIMEOUT_SERIAL> esp;
 Servo          servo;
 
-// Timeout
-unsigned long batteryLowTimeout   = 0;
-unsigned long motorTimeout        = 0;
-unsigned long readyCommandTimeout = 0;
-unsigned long rocketsTimeout[4]   = { 0 };
+// Holds the status of all the elements attached
+struct Status
+{
+    uint8_t motorDx = 1, motorSx = 1;
+    boolean eyesLit = LOW;
+    boolean lidOpen = false;
+    boolean connected = false;
+    boolean musicPlaying = false;
+    boolean rockets[NUM_RAZZI] = { false };
+} status;
+
+// For various timeouts inside the program
+struct Timeout
+{
+    unsigned long batteryLow   = 0;
+    unsigned long motor        = 0;
+    unsigned long readyCommand = 5000;
+    unsigned long rockets[4]   = { 0 };
+} timeout;
+
+boolean readyCommandSent = false;
 
 // Metrics
 unsigned long lastMicros = 0;
@@ -102,18 +116,6 @@ struct LoopTime {
     unsigned long tot = 0;
     unsigned long takes = 0;
 } loopTime;
-
-boolean readyCommandSent = false;
-
-struct Status
-{
-    uint8_t motorDx = 1, motorSx = 1;
-    boolean eyesLit = OFF;
-    boolean lidOpen = false;
-    uint8_t rockets = 0;
-    boolean connected = false;
-    boolean musicPlaying = false;
-} status;
 
 void setup()
 {
@@ -133,24 +135,16 @@ void setup()
     }
 
     // Inizializzazione delle 2 seriali, quella per l'esp (esp) e quella per l'mp3 (mp3)
-    esp.begin(&espSerial, ESP_BAUD_RATE);
-
-    if (DEBUG)
-        Serial.begin(ESP_BAUD_RATE);
-    else
-        mp3.begin();
-
-    // Indica ad arduino che la seriale su cui bisogna concentrarsi ad ascoltare è quella per l'esp
-    // Quella per l'mp3 verrà ignorata in caso di dati in arrivo
-    // (non è un problema visto che non arriveranno mai dati)
-    espSerial.listen();
+    esp.begin(&Serial, ESP_BAUD_RATE);
+    mp3.begin();
 
     servo.attach(PIN_SERVO);
     
     blocca();
 
-    if (DEBUG)
+    #ifdef DEBUG
         Serial.println("> Setup finito");
+    #endif
 }
 
 void loop()
@@ -162,32 +156,33 @@ void loop()
     {
         // La batteria è troppo bassa
         // Invia ogni tot secondi il messaggio che la batteria è troppo bassa
-        if (batteryLowTimeout + BATTERY_LOW_DELAY_ERROR < millis())
+        if (timeout.batteryLow + BATTERY_LOW_DELAY_ERROR < millis())
         {
             sendCommand(Command::makeCommand(CODE_BATTERY_LOW));
-            batteryLowTimeout = millis();
+            timeout.batteryLow = millis();
+            
+            // Interrompi qualsiasi tipo di azione e spegni gli occhi
             blocca();
         }
-        // Interrompi qualsiasi tipo di azione e spegni gli occhi
         return;
     }
 
     // Invia il messaggio SYNC quando si è pronti o è passato troppo tempo da una risposta
-    if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
+    /* if (!readyCommandSent || millis() > readyCommandTimeout + TIMEOUT_ESP_SERIAL)
     {
         //if (DEBUG) Serial.println("> Invio comando di SYNC");
 
-        /* Serial.print("max: ");
+        Serial.print("max: ");
         Serial.println(loopTime.max, DEC);
         Serial.print("min: ");
         Serial.println(loopTime.min, DEC);
         Serial.print("mid: ");
-        Serial.println(loopTime.tot / loopTime.takes, DEC); */
+        Serial.println(loopTime.tot / loopTime.takes, DEC);
 
-        // sendCommand(Command::makeCommand(CODE_CONNECTION_OK));
+        sendCommand(Command::makeCommand(CODE_CONNECTION_OK));
         readyCommandSent = true;
         readyCommandTimeout = millis();
-    }
+    } */
 
     if (esp.available() > 0)
     {
@@ -200,19 +195,15 @@ void loop()
             // Non ci sono errori nel pacchetto
             Command c(packet);
 
-            if (DEBUG)
-            {
+            #ifdef DEBUG
                 Serial.print("> Arrivato");
-                if (SUPER)
+                for (int i = 0; i < COMMAND_SIZE; i++)
                 {
-                    for (int i = 0; i < COMMAND_SIZE; i++)
-                    {
-                        Serial.print(" ");
-                        Serial.print(packet[i], HEX);
-                    }
+                    Serial.print(" ");
+                    Serial.print(packet[i], HEX);
                 }
                 Serial.println();
-            }
+            #endif
 
             if (c.isRight())
                 execute(c);
@@ -227,29 +218,25 @@ void loop()
     }
 
     // Se non sono arrivati messaggi per il controllo dei motori entro tot secondi fermali
-    if ((status.motorDx > 1 || status.motorSx > 1) && millis() >= motorTimeout + MOTOR_DELAY_AUTO_OFF)
+    if ((status.motorDx > 1 || status.motorSx > 1) && millis() >= timeout.motor + MOTOR_DELAY_AUTO_OFF)
         stopMotor();
 
     // Spegni le canne se è passato abbastanza tempo
-    if (status.rockets != 0)
+    // Controlla tutte le canne
+    for(int i = 0; i < NUM_RAZZI; i++)
     {
-        // Controlla tutte le canne
-        for(int i = 0; i < 4; i++)
+        if(status.rockets[i] && millis() > timeout.rockets[i] + CANNA_ACCESA_DELAY)
         {
-            if (((status.rockets & (1 << i)) != 0) && millis() > rocketsTimeout[i] + CANNA_ACCESA_DELAY)
-            {
-                // Se la canna è accesa da troppo tempo
-                digitalWrite(PIN_RAZZI[i], OFF);
-                status.rockets = status.rockets & (~(1 << i));
-
-                if (DEBUG) 
-                {
-                    Serial.print("> Spegnendo canna ");
-                    Serial.println(i, DEC);
-                    Serial.print("> Stato rockets: ");
-                    Serial.println(status.rockets, BIN);
-                }
-            }
+            digitalWrite(PIN_RAZZI[i], LOW);
+            status.rockets[i] = false;
+            
+            #ifdef DEBUG
+                Serial.print("> Spegnendo canna ");
+                Serial.println(i, DEC);
+                Serial.print("> Stato rockets: ");
+                for(int j = 0; j < NUM_RAZZI; j++)
+                    Serial.println(status.rockets[j], BIN);
+            #endif
         }
     }
 
@@ -268,8 +255,9 @@ void loop()
 void execute(Command command)
 {
 
-    if (DEBUG && SUPER)
+    #ifdef DEBUG
         Serial.println("> Eseguendo comando");
+    #endif
 
     uint8_t data[command.size()];
     command.data(data);
@@ -280,50 +268,68 @@ void execute(Command command)
     {
         mp3.play();
         status.musicPlaying = true;
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> play musica");
+        #endif
+        
         break;
     }
     case CODE_PLAY_INDEX:
-    { // Da rimuovere? Non ricordo perchè. Investigare!
+    {
         mp3.playIndex((int)data[0] + 1);
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> play index");
+        #endif
+
         break;
     }
     case CODE_PAUSE:
     {
         mp3.pause();
         status.musicPlaying = false;
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> pausa musica");
+        #endif
+
         break;
     }
     case CODE_NEXT_SONG:
     {
         mp3.next();
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> prossima canzone");
+        #endif
+
         break;
     }
     case CODE_PREVIOUS_SONG:
     {
         mp3.previous();
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> canzone precedente");
+        #endif
+
         break;
     }
     case CODE_SET_VOLUME:
     {
         mp3.volumeSet(data[0]);
+        updateServo();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> imposta volume");
+        #endif
+
         break;
     }
     case CODE_MOVE:
@@ -362,8 +368,10 @@ void execute(Command command)
     {
         status.connected = true;
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> Qualcuno si è connesso");
+        #endif
+
         break;
     }
     case CODE_DISCONNECTED:
@@ -371,8 +379,10 @@ void execute(Command command)
         status.connected = false;
         blocca();
 
-        if (DEBUG)
+        #ifdef DEBUG
             Serial.println("> Qualcuno si è disconnesso");
+        #endif
+        
         break;
     }
     case CODE_CHECK_BATTERY:
@@ -408,8 +418,9 @@ void openLid()
     servo.write(OPENED_LID_ANGLE);
     status.lidOpen = true;
 
-    if (DEBUG)
+    #ifdef DEBUG
         Serial.println("> Aprendo il coperchio");
+    #endif
 }
 
 void closeLid()
@@ -417,8 +428,9 @@ void closeLid()
     servo.write(CLOSED_LID_ANGLE);
     status.lidOpen = false;
 
-    if (DEBUG)
+    #ifdef DEBUG
         Serial.println("> Chiudendo il coperchio");
+    #endif
 }
 
 boolean isOpen()
@@ -448,22 +460,22 @@ void move(uint8_t potDx, uint8_t potSx)
     digitalWrite(PIN_DX_DIR1, !dirDx);
     digitalWrite(PIN_DX_DIR2, dirDx);
     // Imposta la direzione del motore SX
-    digitalWrite(PIN_SX_DIR1, !dirSx);
-    digitalWrite(PIN_SX_DIR2, dirSx);
+    digitalWrite(PIN_SX_DIR1, dirSx);
+    digitalWrite(PIN_SX_DIR2, !dirSx);
     // Imposta la potenza data ai motori (0xFE = 11111110B -> rende sempre zero il LSB)
     analogWrite(PIN_MOTORE_DX, potDx & 0xFE);
     analogWrite(PIN_MOTORE_SX, potSx & 0xFE);
 
     status.motorDx = potDx;
     status.motorSx = potSx;
-    motorTimeout = millis();
+    timeout.motor  = millis();
 
-    if (DEBUG) {
+    #ifdef DEBUG
         Serial.print("> motori: ");
         Serial.print(potDx, HEX);
         Serial.print(" - ");
         Serial.println(potSx, HEX);
-    }
+    #endif
 }
 
 void stopMotor()
@@ -481,21 +493,25 @@ boolean shoot(uint8_t which)
         return false;
 
     // Accendi solo una canna alla volta
-    if (status.rockets != 0)
-        return false;
+    for(int i = 0; i < NUM_RAZZI; i++)
+        if(status.rockets[i])
+            return false;
 
+    // Accendi la canna
     digitalWrite(PIN_RAZZI[which], HIGH);
     
-    status.rockets |= (1 << which);
-    rocketsTimeout[which] = millis();
+    // Segna che la canna è stata accesa e indica quando è stata accesa
+    status.rockets[which]  = true;
+    timeout.rockets[which] = millis();
 
-    if (DEBUG)
-    {
+    #ifdef DEBUG
         Serial.print("> Accendendo canna ");
         Serial.println(which, DEC);
         Serial.print("> Stato rockets: ");
-        Serial.println(status.rockets, BIN);
-    }
+        for(int i = 0; i < NUM_RAZZI; i++)
+            Serial.println(status.rockets[i], BIN);
+    #endif
+
     return true;
 }
 
@@ -504,18 +520,25 @@ void setEyes(boolean lit)
     digitalWrite(PIN_LED_OCCHI, lit);
     status.eyesLit = lit;
 
-    if (DEBUG)
-    {
+    #ifdef DEBUG
         Serial.print("> Impostando occhi a ");
         Serial.println(lit, BIN);
-    }
+    #endif
 }
 
 void blocca()
 {
     stopMotor();
-    setEyes(OFF);
+    setEyes(LOW);
     mp3.pause();
     status.musicPlaying = false;
     closeLid();
+}
+
+void updateServo()
+{
+    if(status.lidOpen)
+        openLid();
+    else
+        closeLid();
 }

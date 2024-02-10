@@ -27,7 +27,8 @@
     "settings": {
         "files.associations": {
             "cstring": "cpp",
-            "variant": "cpp"
+            "variant": "cpp",
+            "fstream": "cpp"
         }
     }
 }

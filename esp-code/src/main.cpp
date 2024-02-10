@@ -1,3 +1,7 @@
+// IP:      192.168.4.1
+// PORT:    4000
+// PSSWRD:  e1m1-2077
+
 /* LIBRERIE */
 #include <TcpConnection.h>
 #include "../../libraries/arduino-lib/Command/src/Command.h"
