@@ -52,7 +52,7 @@ const int PIN_RAZZI[] = {PIN_RAZZO_0, PIN_RAZZO_1, PIN_RAZZO_2, PIN_RAZZO_3};
 #define PIN_LED_OCCHI A5
 #define PIN_CHK_VBAT  A6
 // Varie
-#define ESP_BAUD_RATE           38400
+#define ESP_BAUD_RATE           115200
 #define MESSAGE_LENGTH          (COMMAND_SIZE)
 #define TIMEOUT_SERIAL          10
 #define ECC_SIZE                4

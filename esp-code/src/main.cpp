@@ -13,7 +13,7 @@
 #define SSID                "Roombarmato"
 #define PASSWORD            "e1m1-2077"
 #define PORT                4000
-#define SERIAL_BAUD_RATE    38400
+#define SERIAL_BAUD_RATE    115200
 #define COMMAND_HOLDER_SIZE 64
 #define MESSAGE_LENGTH      (COMMAND_SIZE)
 #define TIMEOUT_SERIAL      10
